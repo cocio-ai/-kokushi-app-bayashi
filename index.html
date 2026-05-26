@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>かにを先生の熱血！国試指導</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app-container">
+    
+    <div id="header-section">
+        <img src="image_0.png" class="kaniwo-avatar-img" alt="かにを先生">
+        <div class="fukidashi-container">
+            <span class="fukidashi-name">かにを先生</span>
+            <div id="teacher-message">読み込み中...</div>
+        </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-screen">
+        <div class="card-header">
+            <h2>必須問題・特訓</h2>
+            <div class="q-progress">
+                問題 <span id="current-q-num"></span> / <span id="total-q-num"></span>
+            </div>
+        </div>
+
+        <div class="card-body" id="quiz-contents">
+            <p id="question-text"></p>
+            
+            <div id="options-area">
+                </div>
+        </div>
+
+        <div id="result-area">
+            <h2 id="judgement-text"></h2>
+            <div id="explanation"></div>
+            <button class="next-btn" id="next-btn">次の問題へ</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
