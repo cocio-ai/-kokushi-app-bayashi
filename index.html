@@ -6,29 +6,50 @@
     <title>がんばれバヤシ！国試一直線</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- 近未来風フォント -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="app-container">
+        <!-- 先生の熱血サイバーエリア -->
         <div class="teacher-area">
             <div class="teacher-icon">🤖</div>
             <div class="balloon">
-                <p id="teacher-message">「システム起動... データをダウンロード中だ！」</p>
+                <p id="teacher-message">「システム起動... ミッションレベルを選択しろ！」</p>
             </div>
         </div>
 
-        <div class="quiz-card" id="quiz-contents">
+        <!-- ★スタート画面（モード選択）★ -->
+        <div class="start-screen" id="start-screen">
+            <h2 class="cyber-title">SELECT MISSION LEVEL</h2>
+            
+            <button class="mode-btn" onclick="startQuiz(10)">
+                <div class="mode-title">QUICK HACK (10問)</div>
+                <div class="mode-time">EST. TIME: 約3分 / スキマ時間の電撃戦</div>
+            </button>
+
+            <button class="mode-btn" onclick="startQuiz(20)">
+                <div class="mode-title">NEURAL DRIVE (20問)</div>
+                <div class="mode-time">EST. TIME: 約7分 / 集中力を持続せよ</div>
+            </button>
+
+            <button class="mode-btn" onclick="startQuiz(30)">
+                <div class="mode-title">SYSTEM MASTER (30問)</div>
+                <div class="mode-time">EST. TIME: 約12分 / 限界突破のフル特訓</div>
+            </button>
+        </div>
+
+        <!-- 問題出題ホログラムパネル（最初は非表示） -->
+        <div class="quiz-card" id="quiz-contents" style="display: none;">
             <div class="q-progress">MISSION <span id="current-q-num">-</span> / <span id="total-q-num">-</span></div>
             <h2 class="question-text" id="question-text">Loading...</h2>
             
-            <div class="options-container" id="options-area">
-                </div>
+            <div class="options-container" id="options-area"></div>
 
             <div class="result-container" id="result-area" style="display: none;">
                 <div class="explanation-box">
