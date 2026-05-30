@@ -6,6 +6,8 @@
     <title>がんばれバヤシ！国試一直線</title>
     <link rel="stylesheet" href="style.css">
     
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -15,25 +17,25 @@
 <body>
     <div class="app-container">
         <div class="teacher-area">
-            <div class="teacher-icon">🦀</div>
+            <div class="teacher-icon">🤖</div>
             <div class="balloon">
-                <p id="teacher-message">「データを読み込んでいるぞ！熱く待て！」</p>
+                <p id="teacher-message">「システム起動... データをダウンロード中だ！」</p>
             </div>
         </div>
 
         <div class="quiz-card" id="quiz-contents">
-            <div class="q-progress">第 <span id="current-q-num">-</span> 問 / 全 <span id="total-q-num">-</span> 問</div>
-            <h2 class="question-text" id="question-text">読み込み中...</h2>
+            <div class="q-progress">MISSION <span id="current-q-num">-</span> / <span id="total-q-num">-</span></div>
+            <h2 class="question-text" id="question-text">Loading...</h2>
             
             <div class="options-container" id="options-area">
                 </div>
 
             <div class="result-container" id="result-area" style="display: none;">
                 <div class="explanation-box">
-                    <h3>【かにを先生の熱血解説】</h3>
+                    <h3>[ SYSTEM ANALYSIS ]</h3>
                     <p id="explanation"></p>
                 </div>
-                <button class="next-btn" id="next-btn">次の問題へ！</button>
+                <button class="next-btn" id="next-btn">NEXT MISSION &gt;&gt;</button>
             </div>
         </div>
     </div>
