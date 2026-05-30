@@ -1,26 +1,29 @@
-// --- Firebaseの初期設定（★ここにコピーした設定を貼り付けてくれ！★） ---
+// --- 1. Firebaseの初期設定 ---
 const firebaseConfig = {
-    apiKey: "AIzaSyXXXXXXXXXXXXXXX",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdefg"
+    apiKey: "AIzaSyAP4WmzOpwjst-KTgJtD99r12Azdw1n_D8",
+    authDomain: "kokushi-bayashi.firebaseapp.com",
+    projectId: "kokushi-bayashi",
+    storageBucket: "kokushi-bayashi.firebasestorage.app",
+    messagingSenderId: "930906961772",
+    appId: "1:930906961772:web:6564c3747eb8491114e649"
 };
+
 // Firebaseの初期化
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
-// ----------------------------------------------------
 
+// --- 2. 変数と設定 ---
 let allQuizData = []; // スプレッドシートの全データ
 let quizData = [];    // 今回出題する30問
 let currentIndex = 0;
 let score = 0;
 
+// スプレッドシートのCSV出力URL
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/11zzNYvPn6RgirwpnYVnnpSyFEH109JGbOPlVr35wIqw/export?format=csv";
 
+// 先生の熱血セリフ集
 const scripts = {
     intro: [
         "「バヤシ！今日も熱くいくぞ！ランダム30問1本勝負だ！」",
@@ -28,7 +31,8 @@ const scripts = {
     ],
     encourage: [
         "「その調子だ！もっと熱くなれ！」",
-        "「迷うな！お前が今までやってきた努力を信じるんだ！」"
+        "「迷うな！お前が今までやってきた努力を信じるんだ！」",
+        "「苦しい時こそ成長している証拠だ！いけー！」"
     ],
     correct: [
         "「ナイス！その答え、最高に熱いぜ！」",
@@ -40,7 +44,7 @@ const scripts = {
     ],
     finish100: "「完璧だバヤシ！この30問満点、お前の情熱の証だ！🔥」",
     finishGreat: "「よく頑張った！間違えた問題こそがお前を強くするんだ！」",
-    finishBad: "「どうした！お前の力はこんなもんじゃないはずだ！もう1回だ！」"
+    finishBad: "「どうしたバヤシ！お前の力はこんなもんじゃないはずだ！もう1回だ！」"
 };
 
 const teacherMessage = document.getElementById("teacher-message");
@@ -52,7 +56,7 @@ const resultArea = document.getElementById("result-area");
 const explanationText = document.getElementById("explanation");
 const nextBtn = document.getElementById("next-btn");
 
-// 配列をシャッフルする熱血関数
+// --- 3. 問題の読み込みとシャッフル ---
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -61,11 +65,8 @@ function shuffleArray(array) {
     return array;
 }
 
-// データの読み込みと30問の抽出
 async function fetchQuizData() {
     try {
-        teacherMessage.textContent = "「今、最新の国試データを取り寄せておる！刮目して待てい！！」";
-
         const response = await fetch(SHEET_CSV_URL);
         const csvText = await response.text();
 
@@ -80,7 +81,7 @@ async function fetchQuizData() {
                     explanation: row["解説"]
                 }));
 
-                // ★ここで全問題をシャッフルし、先頭の30問だけを切り取る★
+                // 全問題をシャッフルし、先頭の30問だけを切り取る
                 quizData = shuffleArray([...allQuizData]).slice(0, 30);
 
                 totalQNum.textContent = quizData.length;
@@ -90,7 +91,7 @@ async function fetchQuizData() {
         });
     } catch (error) {
         console.error("データの読み込みに失敗しました:", error);
-        teacherMessage.textContent = "「エラーだ！通信環境を確認してくれ！」";
+        teacherMessage.textContent = "「通信エラーだ！電波の良いところでリロードしてくれ！」";
     }
 }
 
@@ -101,6 +102,7 @@ function getRandomScript(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// --- 4. クイズの進行処理 ---
 function loadQuestion() {
     resultArea.style.display = "none";
     optionsArea.innerHTML = "";
@@ -168,21 +170,20 @@ nextBtn.onclick = () => {
     }
 };
 
-// ★結果の保存とグラフ表示の熱血処理★
+// --- 5. Firebaseへの保存とグラフ描画 ---
 async function saveAndShowFinalResult() {
     const cardContents = document.getElementById("quiz-contents");
     resultArea.style.display = "none"; 
     
     const percentage = Math.round((score / quizData.length) * 100);
 
-    // セリフの決定
     let finalScript = "";
     if (percentage === 100) finalScript = scripts.finish100;
     else if (percentage >= 70) finalScript = scripts.finishGreat;
     else finalScript = scripts.finishBad;
     teacherMessage.textContent = finalScript;
 
-    // 画面の書き換え（グラフ描画用のcanvasタグを用意）
+    // 画面の書き換え（グラフ用のcanvasを描画）
     cardContents.classList.add("final-result-screen");
     cardContents.innerHTML = `
         <h2>特訓終了！</h2>
@@ -195,7 +196,7 @@ async function saveAndShowFinalResult() {
     `;
 
     try {
-        // Firebaseへ今回の結果を保存
+        // Firebaseへ成績を保存
         await db.collection("examResults").add({
             score: score,
             total: quizData.length,
@@ -203,16 +204,14 @@ async function saveAndShowFinalResult() {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // 過去の成績データをFirebaseから取得してグラフを描画
         drawHistoryChart();
 
     } catch (error) {
         console.error("Firebaseへの保存に失敗しました", error);
-        teacherMessage.textContent = "「通信エラーだ！でもお前の努力は俺がしっかり記憶したぞ！」";
+        teacherMessage.textContent = "「通信エラーだ！だがお前の努力は俺の心に刻まれたぞ！」";
     }
 }
 
-// 成長の軌跡を描画する関数
 async function drawHistoryChart() {
     const snapshot = await db.collection("examResults")
                              .orderBy("timestamp", "asc")
@@ -243,7 +242,7 @@ async function drawHistoryChart() {
                 borderWidth: 3,
                 pointBackgroundColor: '#e74c3c',
                 pointRadius: 5,
-                tension: 0.3 // 少し滑らかな曲線に
+                tension: 0.3
             }]
         },
         options: {
