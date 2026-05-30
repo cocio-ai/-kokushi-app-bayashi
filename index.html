@@ -4,55 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>がんばれバヤシ！国試一直線</title>
-    
-    <!-- CSSファイルの読み込み -->
     <link rel="stylesheet" href="style.css">
     
-    <!-- スプレッドシート(CSV)読み込みツール（PapaParse）の導入 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-<div id="app-container">
-    
-    <!-- かにを先生の吹き出しエリア -->
-    <div id="header-section">
-        <!-- ※画像のファイル名を変えた場合はここも変更してください -->
-        <img src="image_0.png" class="kaniwo-avatar-img" alt="かにを先生">
-        <div class="fukidashi-container">
-            <span class="fukidashi-name">かにを先生</span>
-            <div id="teacher-message">読み込み中...</div>
-        </div>
-    </div>
-
-    <!-- クイズカード -->
-    <div class="quiz-card" id="quiz-screen">
-        <div class="card-header">
-            <h2>がんばれバヤシ！国試一直線</h2>
-            <div class="q-progress">
-                問題 <span id="current-q-num"></span> / <span id="total-q-num"></span>
+    <div class="app-container">
+        <div class="teacher-area">
+            <div class="teacher-icon">🦀</div>
+            <div class="balloon">
+                <p id="teacher-message">「データを読み込んでいるぞ！熱く待て！」</p>
             </div>
         </div>
 
-        <div class="card-body" id="quiz-contents">
-            <p id="question-text"></p>
+        <div class="quiz-card" id="quiz-contents">
+            <div class="q-progress">第 <span id="current-q-num">-</span> 問 / 全 <span id="total-q-num">-</span> 問</div>
+            <h2 class="question-text" id="question-text">読み込み中...</h2>
             
-            <div id="options-area">
-                <!-- 選択肢ボタンがJSで生成されます -->
-            </div>
-        </div>
+            <div class="options-container" id="options-area">
+                </div>
 
-        <!-- 結果表示エリア -->
-        <div id="result-area">
-            <h2 id="judgement-text"></h2>
-            <div id="explanation"></div>
-            <button class="next-btn" id="next-btn">次の問題へ</button>
+            <div class="result-container" id="result-area" style="display: none;">
+                <div class="explanation-box">
+                    <h3>【かにを先生の熱血解説】</h3>
+                    <p id="explanation"></p>
+                </div>
+                <button class="next-btn" id="next-btn">次の問題へ！</button>
+            </div>
         </div>
     </div>
 
-</div>
-
-<!-- JavaScriptファイルの読み込み -->
-<script src="main.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
