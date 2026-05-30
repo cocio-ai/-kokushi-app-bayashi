@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 題名を変更 -->
     <title>がんばれバヤシ！国試一直線</title>
+    
+    <!-- CSSファイルの読み込み -->
     <link rel="stylesheet" href="style.css">
+    
+    <!-- スプレッドシート(CSV)読み込みツール（PapaParse）の導入 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
 
 <div id="app-container">
     
+    <!-- かにを先生の吹き出しエリア -->
     <div id="header-section">
+        <!-- ※画像のファイル名を変えた場合はここも変更してください -->
         <img src="image_0.png" class="kaniwo-avatar-img" alt="かにを先生">
         <div class="fukidashi-container">
             <span class="fukidashi-name">かにを先生</span>
@@ -19,9 +25,9 @@
         </div>
     </div>
 
+    <!-- クイズカード -->
     <div class="quiz-card" id="quiz-screen">
         <div class="card-header">
-            <!-- 題名を変更 -->
             <h2>がんばれバヤシ！国試一直線</h2>
             <div class="q-progress">
                 問題 <span id="current-q-num"></span> / <span id="total-q-num"></span>
@@ -36,6 +42,7 @@
             </div>
         </div>
 
+        <!-- 結果表示エリア -->
         <div id="result-area">
             <h2 id="judgement-text"></h2>
             <div id="explanation"></div>
@@ -45,6 +52,7 @@
 
 </div>
 
+<!-- JavaScriptファイルの読み込み -->
 <script src="main.js"></script>
 </body>
 </html>
