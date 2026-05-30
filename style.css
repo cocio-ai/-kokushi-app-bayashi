@@ -62,7 +62,7 @@ body {
     border-color: transparent #00f3ff transparent transparent;
 }
 
-/* ★スタート画面（モード選択）★ */
+/* スタート画面 */
 .start-screen {
     background: rgba(10, 15, 30, 0.8);
     backdrop-filter: blur(12px);
@@ -84,7 +84,7 @@ body {
     display: block;
     width: 100%;
     background-color: rgba(0, 243, 255, 0.05);
-    border: 1px solid #00f3ff;
+    border: 1px solid #38bdf8;
     border-radius: 4px;
     padding: 15px;
     margin-bottom: 15px;
@@ -94,8 +94,8 @@ body {
 }
 
 .mode-btn:hover {
-    background-color: rgba(0, 243, 255, 0.2);
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+    background-color: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
     transform: scale(1.02);
 }
 
@@ -103,7 +103,7 @@ body {
     font-family: 'Orbitron', sans-serif;
     font-size: 20px;
     font-weight: bold;
-    color: #00f3ff;
+    color: #38bdf8;
     margin-bottom: 5px;
 }
 
@@ -112,7 +112,28 @@ body {
     color: #94a3b8;
 }
 
-/* クイズパネル本体 */
+/* ログ画面起動用のボタン */
+.archive-btn {
+    display: block;
+    width: 100%;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px dashed #f59e0b;
+    color: #f59e0b;
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 25px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.archive-btn:hover {
+    background-color: rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+}
+
+/* クイズ・統計パネル共通 */
 .quiz-card {
     background: rgba(10, 15, 30, 0.6);
     backdrop-filter: blur(12px);
@@ -164,10 +185,6 @@ body {
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
-.option-btn:disabled {
-    cursor: not-allowed;
-}
-
 .option-btn.selected {
     background-color: rgba(0, 243, 255, 0.3);
     border-color: #00f3ff;
@@ -189,22 +206,13 @@ body {
 }
 
 /* 解説エリア */
-.result-container {
-    margin-top: 25px;
-    animation: scanline 0.5s ease-out;
-}
-
-@keyframes scanline {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.result-container { margin-top: 25px; }
 
 .explanation-box {
     background-color: rgba(245, 158, 11, 0.1);
     border-left: 4px solid #f59e0b;
     padding: 15px;
     margin-bottom: 20px;
-    border-radius: 0 4px 4px 0;
 }
 
 .explanation-box h3 {
@@ -214,80 +222,88 @@ body {
     font-family: 'Orbitron', sans-serif;
 }
 
-.explanation-box p {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.6;
-}
+.explanation-box p { margin: 0; font-size: 15px; line-height: 1.6; }
 
-/* NEXTボタン */
 .next-btn {
-    display: block;
-    width: 100%;
-    background-color: transparent;
-    color: #00f3ff;
-    border: 1px solid #00f3ff;
-    border-radius: 4px;
+    display: block; width: 100%; background-color: transparent; color: #00f3ff;
+    border: 1px solid #00f3ff; border-radius: 4px; padding: 15px;
+    font-size: 18px; font-family: 'Orbitron', sans-serif; font-weight: bold;
+    cursor: pointer; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset; transition: all 0.3s;
+}
+
+.next-btn:hover { background-color: #00f3ff; color: #050914; box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); }
+
+/* 最終結果画面 */
+.final-result-screen { text-align: center; }
+.final-score { font-size: 60px; font-family: 'Orbitron'; font-weight: bold; color: #00f3ff; text-shadow: 0 0 20px rgba(0, 243, 255, 0.6); margin: 10px 0; }
+.comparison-box { background: rgba(255, 255, 255, 0.05); border: 1px dashed #00f3ff; padding: 15px; margin: 20px 0; border-radius: 4px; }
+.comparison-box p { margin: 0 0 5px 0; font-size: 12px; color: #94a3b8; }
+.comparison-box h3 { margin: 0; font-size: 18px; color: #00ff80; }
+.comparison-box h3.warning { color: #f59e0b; }
+.charts-container { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
+.chart-wrapper { width: 100%; max-width: 400px; margin-inline: auto; }
+
+/* ★新設：週間・月間統計デザイン★ */
+.stats-summary-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.stats-summary-card {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
     padding: 15px;
-    font-size: 18px;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset;
-    transition: all 0.3s;
-}
-
-.next-btn:hover {
-    background-color: #00f3ff;
-    color: #050914;
-    box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
-}
-
-/* ★最終結果画面★ */
-.final-result-screen {
     text-align: center;
 }
+.stats-summary-card.weekly { border: 1px solid rgba(56, 189, 248, 0.3); }
+.stats-summary-card.monthly { border: 1px solid rgba(168, 85, 247, 0.3); }
 
-.final-score {
-    font-size: 60px;
-    font-family: 'Orbitron', sans-serif;
+.stats-summary-card h4 {
+    margin: 0 0 10px 0;
+    font-family: 'Orbitron';
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+.stats-summary-card.weekly h4 { color: #38bdf8; }
+.stats-summary-card.monthly h4 { color: #a855f7; }
+
+.stats-val {
+    font-family: 'Orbitron';
+    font-size: 26px;
     font-weight: bold;
-    color: #00f3ff;
-    text-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
-    margin: 10px 0;
+    color: #fff;
+    margin-top: 5px;
 }
+.stats-val span { font-size: 12px; margin-left: 2px; color: #94a3b8; }
+.stats-label { font-size: 11px; color: #64748b; margin-bottom: 8px; }
 
-/* ボーダー比較ボックス */
-.comparison-box {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed #00f3ff;
-    padding: 15px;
-    margin: 20px 0;
-    border-radius: 4px;
-}
-.comparison-box p {
-    margin: 0 0 5px 0;
-    font-size: 12px;
-    color: #94a3b8;
-}
-.comparison-box h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #00ff80;
-}
-.comparison-box h3.warning {
-    color: #f59e0b;
-}
-
-/* グラフを横並びor縦並びにするコンテナ */
-.charts-container {
+/* タイムスタンプ付履歴ログリスト */
+.log-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    margin-top: 20px;
+    gap: 8px;
+    padding-right: 5px;
 }
-.chart-wrapper {
-    width: 100%;
-    max-width: 400px;
-    margin-inline: auto;
+/* スクロールバーカスタム */
+.log-list::-webkit-scrollbar { width: 4px; }
+.log-list::-webkit-scrollbar-thumb { background: #00f3ff; border-radius: 2px; }
+
+.log-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid #38bdf8;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: 'Orbitron', 'Noto Sans JP';
 }
+.log-date { color: #94a3b8; font-size: 12px; }
+.log-meta { color: #38bdf8; }
+.log-pct { font-weight: bold; color: #00ff80; }
+.log-pct.low { color: #ff0055; }
