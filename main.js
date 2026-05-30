@@ -15,36 +15,35 @@ if (!firebase.apps.length) {
 const db = firebase.firestore();
 
 // --- 2. 変数と設定 ---
-let allQuizData = []; // スプレッドシートの全データ
-let quizData = [];    // 今回出題する30問
+let allQuizData = []; 
+let quizData = [];    
 let currentIndex = 0;
 let score = 0;
 
-// スプレッドシートのCSV出力URL
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/11zzNYvPn6RgirwpnYVnnpSyFEH109JGbOPlVr35wIqw/export?format=csv";
 
-// 先生の熱血セリフ集
+// サイバー仕様のセリフ集
 const scripts = {
     intro: [
-        "「バヤシ！今日も熱くいくぞ！ランダム30問1本勝負だ！」",
-        "「国試は自分との戦いだ！今日の30問に全身全霊をかけろ！」"
+        "「システム・オールグリーン！ランダム30問の特訓を開始する！」",
+        "「ターゲット確認。お前の限界を突破する時間だ！」"
     ],
     encourage: [
-        "「その調子だ！もっと熱くなれ！」",
-        "「迷うな！お前が今までやってきた努力を信じるんだ！」",
-        "「苦しい時こそ成長している証拠だ！いけー！」"
+        "「思考回路をフル回転させろ！」",
+        "「迷うな！過去のデータを信じろ！」",
+        "「エラーを恐れるな！アップデートのチャンスだ！」"
     ],
     correct: [
-        "「ナイス！その答え、最高に熱いぜ！」",
-        "「大正解！今の君は誰よりも輝いてる！」"
+        "「[SUCCESS] 見事だ！その直感、研ぎ澄まされているぞ！」",
+        "「[CLEAR] 大正解！シナプスが繋がったな！」"
     ],
     wrong: [
-        "「ドンマイ！失敗は成功のもとだ！次こそ決めようぜ！」",
-        "「惜しい！でもベクトルは合ってるぞ！解説を読んで吸収しろ！」"
+        "「[ERROR] ドンマイだ！この失敗を次期アップデートに活かせ！」",
+        "「[WARNING] 軌道修正が必要だ！解説データをインストールしろ！」"
     ],
-    finish100: "「完璧だバヤシ！この30問満点、お前の情熱の証だ！🔥」",
-    finishGreat: "「よく頑張った！間違えた問題こそがお前を強くするんだ！」",
-    finishBad: "「どうしたバヤシ！お前の力はこんなもんじゃないはずだ！もう1回だ！」"
+    finish100: "「[PERFECT] 驚異的な処理能力だ！お前の情熱がシステムを超えたぞ！」",
+    finishGreat: "「[MISSION COMPLETE] よくやった！確実な進化を検知したぞ！」",
+    finishBad: "「[RETRY REQUIRED] まだポテンシャルを引き出しきれていない！再起動だ！」"
 };
 
 const teacherMessage = document.getElementById("teacher-message");
@@ -81,9 +80,7 @@ async function fetchQuizData() {
                     explanation: row["解説"]
                 }));
 
-                // 全問題をシャッフルし、先頭の30問だけを切り取る
                 quizData = shuffleArray([...allQuizData]).slice(0, 30);
-
                 totalQNum.textContent = quizData.length;
                 teacherMessage.textContent = getRandomScript(scripts.intro);
                 loadQuestion();
@@ -91,7 +88,7 @@ async function fetchQuizData() {
         });
     } catch (error) {
         console.error("データの読み込みに失敗しました:", error);
-        teacherMessage.textContent = "「通信エラーだ！電波の良いところでリロードしてくれ！」";
+        teacherMessage.textContent = "「[FATAL ERROR] データベースへの接続に失敗した！」";
     }
 }
 
@@ -108,7 +105,8 @@ function loadQuestion() {
     optionsArea.innerHTML = "";
     
     const currentQuiz = quizData[currentIndex];
-    currentQNum.textContent = currentIndex + 1;
+    // IDを2桁ゼロ埋めでサイバーっぽく
+    currentQNum.textContent = String(currentIndex + 1).padStart(2, '0');
     questionText.textContent = currentQuiz.question;
 
     teacherMessage.textContent = getRandomScript(scripts.encourage);
@@ -156,7 +154,7 @@ function checkAnswer(chosenIndex, chosenBtn) {
     resultArea.style.display = "block";
 
     if (currentIndex === quizData.length - 1) {
-        nextBtn.textContent = "特訓結果を見る";
+        nextBtn.textContent = "SHOW RESULTS >>";
     }
 }
 
@@ -170,7 +168,7 @@ nextBtn.onclick = () => {
     }
 };
 
-// --- 5. Firebaseへの保存とグラフ描画 ---
+// --- 5. Firebaseへの保存とサイバーグラフ描画 ---
 async function saveAndShowFinalResult() {
     const cardContents = document.getElementById("quiz-contents");
     resultArea.style.display = "none"; 
@@ -183,39 +181,35 @@ async function saveAndShowFinalResult() {
     else finalScript = scripts.finishBad;
     teacherMessage.textContent = finalScript;
 
-    // 画面の書き換え（グラフ用のcanvasを描画）
     cardContents.classList.add("final-result-screen");
     cardContents.innerHTML = `
-        <h2>特訓終了！</h2>
-        <div class="q-progress">30問中 ${score}問 正解</div>
+        <h2 style="color:#00f3ff; font-family:'Orbitron', sans-serif;">SYSTEM REPORT</h2>
+        <div class="q-progress">ACCURACY: ${score} / 30</div>
         <div class="final-score">${percentage}%</div>
         <div style="margin-top: 20px; width: 100%; max-width: 400px; margin-inline: auto;">
             <canvas id="historyChart"></canvas>
         </div>
-        <button class="next-btn final-retry-btn" style="margin-top:20px;" onclick="location.reload()">次の30問へ挑む！</button>
+        <button class="next-btn final-retry-btn" style="margin-top:20px;" onclick="location.reload()">REBOOT SYSTEM >></button>
     `;
 
     try {
-        // Firebaseへ成績を保存
         await db.collection("examResults").add({
             score: score,
             total: quizData.length,
             percentage: percentage,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-
         drawHistoryChart();
-
     } catch (error) {
         console.error("Firebaseへの保存に失敗しました", error);
-        teacherMessage.textContent = "「通信エラーだ！だがお前の努力は俺の心に刻まれたぞ！」";
+        teacherMessage.textContent = "「[WARNING] サーバーとの同期に失敗した！」";
     }
 }
 
 async function drawHistoryChart() {
     const snapshot = await db.collection("examResults")
                              .orderBy("timestamp", "asc")
-                             .limit(10) // 最新の10回分を表示
+                             .limit(10)
                              .get();
 
     const labels = [];
@@ -224,32 +218,44 @@ async function drawHistoryChart() {
 
     snapshot.forEach(doc => {
         const data = doc.data();
-        labels.push(attempt + "回目");
+        labels.push("T-" + attempt);
         dataPoints.push(data.percentage);
         attempt++;
     });
 
+    // ダークモード仕様のネオングラフ
     const ctx = document.getElementById('historyChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: '正答率 (%)',
+                label: 'ACCURACY (%)',
                 data: dataPoints,
-                borderColor: '#e74c3c',
-                backgroundColor: 'rgba(231, 76, 60, 0.2)',
-                borderWidth: 3,
-                pointBackgroundColor: '#e74c3c',
-                pointRadius: 5,
-                tension: 0.3
+                borderColor: '#00f3ff',
+                backgroundColor: 'rgba(0, 243, 255, 0.1)',
+                borderWidth: 2,
+                pointBackgroundColor: '#00f3ff',
+                pointBorderColor: '#fff',
+                pointRadius: 4,
+                tension: 0.2,
+                fill: true
             }]
         },
         options: {
+            plugins: {
+                legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } }
+            },
             scales: {
+                x: { 
+                    ticks: { color: '#94a3b8', font: { family: 'Orbitron' } },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                },
                 y: {
                     beginAtZero: true,
-                    max: 100
+                    max: 100,
+                    ticks: { color: '#94a3b8', font: { family: 'Orbitron' } },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 }
             }
         }
