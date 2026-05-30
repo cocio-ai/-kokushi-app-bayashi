@@ -1,38 +1,46 @@
-// スプレッドシートから読み込んだデータを入れる空の箱
-let quizData = [];
+// --- Firebaseの初期設定（★ここにコピーした設定を貼り付けてくれ！★） ---
+const firebaseConfig = {
+    apiKey: "AIzaSyXXXXXXXXXXXXXXX",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdefg"
+};
+// Firebaseの初期化
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.firestore();
+// ----------------------------------------------------
+
+let allQuizData = []; // スプレッドシートの全データ
+let quizData = [];    // 今回出題する30問
 let currentIndex = 0;
 let score = 0;
 
-// ★スプレッドシート（CSV形式）のURL★
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/11zzNYvPn6RgirwpnYVnnpSyFEH109JGbOPlVr35wIqw/export?format=csv";
 
 const scripts = {
     intro: [
-        "「わしが国試塾塾長、かにをである！！」",
-        "「気合を入れい！！本日の特訓を開始する！！」",
-        "「貴様ら、国試をナメるなよ！！死ぬ気でかかってこい！！」"
+        "「バヤシ！今日も熱くいくぞ！ランダム30問1本勝負だ！」",
+        "「国試は自分との戦いだ！今日の30問に全身全霊をかけろ！」"
     ],
     encourage: [
-        "「うむ！この問題、貴様ならどう解く！！」",
-        "「男なら迷わず直感でいけい！！いや、選択肢は最後まで読めい！！」",
-        "「ここは引っかけである！刮目して見よ！！」",
-        "「己の直感を信じ、そして論理で打ち破れい！！」"
+        "「その調子だ！もっと熱くなれ！」",
+        "「迷うな！お前が今までやってきた努力を信じるんだ！」"
     ],
     correct: [
-        "「うむ！！見事である！！」",
-        "「よくぞ答えた！！それでこそわしが見込んだ生徒よ！！」",
-        "「大正解である！！その調子で突き進めい！！」",
-        "「うおおおお！！完璧な解答である！！」"
+        "「ナイス！その答え、最高に熱いぜ！」",
+        "「大正解！今の君は誰よりも輝いてる！」"
     ],
     wrong: [
-        "「大ばか者があああ！！基礎からやり直せい！！」",
-        "「たるんどる！！テキスト100ページ分、読んでから出直してこい！！」",
-        "「なんたる失態！！この解説を血肉となるまで頭に叩き込めい！！」",
-        "「貴様、どこを見ている！！罠にまんまとハマりおって！！」"
+        "「ドンマイ！失敗は成功のもとだ！次こそ決めようぜ！」",
+        "「惜しい！でもベクトルは合ってるぞ！解説を読んで吸収しろ！」"
     ],
-    finish100: "「わしが国試塾塾長、かにをである！！貴様の満点、見事なり！！本番もその意気で行けい！！🦀🔥」",
-    finishGreat: "「うむ、悪くない成績である！だが、間違えた箇所は今日中に復習せい！！休むのはそれからだ！！」",
-    finishBad: "「大ばか者があああ！！この成績で受かると思っているのか！！今すぐ特訓を最初からやり直せい！！」"
+    finish100: "「完璧だバヤシ！この30問満点、お前の情熱の証だ！🔥」",
+    finishGreat: "「よく頑張った！間違えた問題こそがお前を強くするんだ！」",
+    finishBad: "「どうした！お前の力はこんなもんじゃないはずだ！もう1回だ！」"
 };
 
 const teacherMessage = document.getElementById("teacher-message");
@@ -44,7 +52,16 @@ const resultArea = document.getElementById("result-area");
 const explanationText = document.getElementById("explanation");
 const nextBtn = document.getElementById("next-btn");
 
-// --- スプレッドシートからデータを読み込む処理 ---
+// 配列をシャッフルする熱血関数
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// データの読み込みと30問の抽出
 async function fetchQuizData() {
     try {
         teacherMessage.textContent = "「今、最新の国試データを取り寄せておる！刮目して待てい！！」";
@@ -56,13 +73,15 @@ async function fetchQuizData() {
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                // スプレッドシートのデータをアプリ用の形に変換
-                quizData = results.data.map(row => ({
+                allQuizData = results.data.map(row => ({
                     question: row["問題文"],
                     options: [row["選択肢1"], row["選択肢2"], row["選択肢3"], row["選択肢4"]],
                     correctIndex: parseInt(row["正解番号"], 10),
                     explanation: row["解説"]
                 }));
+
+                // ★ここで全問題をシャッフルし、先頭の30問だけを切り取る★
+                quizData = shuffleArray([...allQuizData]).slice(0, 30);
 
                 totalQNum.textContent = quizData.length;
                 teacherMessage.textContent = getRandomScript(scripts.intro);
@@ -71,7 +90,7 @@ async function fetchQuizData() {
         });
     } catch (error) {
         console.error("データの読み込みに失敗しました:", error);
-        teacherMessage.textContent = "「エラーである！データが読み込めぬゆえ、通信環境を確認せい！」";
+        teacherMessage.textContent = "「エラーだ！通信環境を確認してくれ！」";
     }
 }
 
@@ -96,7 +115,6 @@ function loadQuestion() {
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.textContent = option;
-        
         btn.onclick = () => selectOption(index, btn);
         optionsArea.appendChild(btn);
     });
@@ -105,13 +123,10 @@ function loadQuestion() {
 let selectedIndex = null;
 function selectOption(index, clickedBtn) {
     if (selectedIndex !== null && resultArea.style.display === "block") return;
-
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(btn => btn.classList.remove("selected"));
-
     clickedBtn.classList.add("selected");
     selectedIndex = index;
-
     checkAnswer(selectedIndex, clickedBtn);
 }
 
@@ -146,36 +161,98 @@ function checkAnswer(chosenIndex, chosenBtn) {
 nextBtn.onclick = () => {
     currentIndex++;
     selectedIndex = null; 
-    
     if (currentIndex < quizData.length) {
         loadQuestion();
     } else {
-        showFinalResult();
+        saveAndShowFinalResult();
     }
 };
 
-function showFinalResult() {
+// ★結果の保存とグラフ表示の熱血処理★
+async function saveAndShowFinalResult() {
     const cardContents = document.getElementById("quiz-contents");
     resultArea.style.display = "none"; 
     
     const percentage = Math.round((score / quizData.length) * 100);
 
+    // セリフの決定
     let finalScript = "";
-    if (percentage === 100) {
-        finalScript = scripts.finish100;
-    } else if (percentage >= 70) {
-        finalScript = scripts.finishGreat;
-    } else {
-        finalScript = scripts.finishBad;
-    }
+    if (percentage === 100) finalScript = scripts.finish100;
+    else if (percentage >= 70) finalScript = scripts.finishGreat;
+    else finalScript = scripts.finishBad;
     teacherMessage.textContent = finalScript;
 
+    // 画面の書き換え（グラフ描画用のcanvasタグを用意）
     cardContents.classList.add("final-result-screen");
     cardContents.innerHTML = `
         <h2>特訓終了！</h2>
-        <div class="q-progress">${quizData.length}問中 ${score}問 正解</div>
+        <div class="q-progress">30問中 ${score}問 正解</div>
         <div class="final-score">${percentage}%</div>
-        <p>間違えた問題は、すぐに復習して理解を深めよう！</p>
-        <button class="next-btn final-retry-btn" onclick="location.reload()">もう一度特訓する</button>
+        <div style="margin-top: 20px; width: 100%; max-width: 400px; margin-inline: auto;">
+            <canvas id="historyChart"></canvas>
+        </div>
+        <button class="next-btn final-retry-btn" style="margin-top:20px;" onclick="location.reload()">次の30問へ挑む！</button>
     `;
+
+    try {
+        // Firebaseへ今回の結果を保存
+        await db.collection("examResults").add({
+            score: score,
+            total: quizData.length,
+            percentage: percentage,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 過去の成績データをFirebaseから取得してグラフを描画
+        drawHistoryChart();
+
+    } catch (error) {
+        console.error("Firebaseへの保存に失敗しました", error);
+        teacherMessage.textContent = "「通信エラーだ！でもお前の努力は俺がしっかり記憶したぞ！」";
+    }
+}
+
+// 成長の軌跡を描画する関数
+async function drawHistoryChart() {
+    const snapshot = await db.collection("examResults")
+                             .orderBy("timestamp", "asc")
+                             .limit(10) // 最新の10回分を表示
+                             .get();
+
+    const labels = [];
+    const dataPoints = [];
+    let attempt = 1;
+
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        labels.push(attempt + "回目");
+        dataPoints.push(data.percentage);
+        attempt++;
+    });
+
+    const ctx = document.getElementById('historyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '正答率 (%)',
+                data: dataPoints,
+                borderColor: '#e74c3c',
+                backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                borderWidth: 3,
+                pointBackgroundColor: '#e74c3c',
+                pointRadius: 5,
+                tension: 0.3 // 少し滑らかな曲線に
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
 }
