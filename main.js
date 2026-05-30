@@ -1,6 +1,6 @@
 // --- 1. Firebaseの初期設定 ---
 const firebaseConfig = {
-    apiKey: "AIzaSyAP4WmzOpwjst-KTgJtD99r12Azdw1n_D8", // ★自分のキーに変更！
+    apiKey: "AIzaSyAP4WmzOpwjst-KTgJtD99r12Azdw1n_D8",
     authDomain: "kokushi-bayashi.firebaseapp.com",
     projectId: "kokushi-bayashi",
     storageBucket: "kokushi-bayashi.firebasestorage.app",
@@ -18,7 +18,7 @@ let allQuizData = [];
 let quizData = [];    
 let currentIndex = 0;
 let score = 0;
-let questionLimit = 10; // 選択されたモードの問題数
+let questionLimit = 10; 
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/11zzNYvPn6RgirwpnYVnnpSyFEH109JGbOPlVr35wIqw/export?format=csv";
 
@@ -38,7 +38,7 @@ const scripts = {
     ],
     finish100: "「[PERFECT] 驚異的な処理能力だ！お前の情熱がシステムを超えたぞ！」",
     finishGreat: "「[MISSION COMPLETE] 合格ボーダー突破！確実な進化を検知したぞ！」",
-    finishBad: "「[RETRY REQUIRED] まだポテンシャルを引き出しきれていない！再起動だ！」"
+    finishBad: "「[RETRY REQUIRED] まだポテンシャルを引き出しきれたいない！再起動だ！」"
 };
 
 const teacherMessage = document.getElementById("teacher-message");
@@ -50,7 +50,7 @@ const resultArea = document.getElementById("result-area");
 const explanationText = document.getElementById("explanation");
 const nextBtn = document.getElementById("next-btn");
 
-// --- 3. モード選択と問題読み込み ---
+// --- 3. クイズ制御ロジック ---
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -59,7 +59,6 @@ function shuffleArray(array) {
     return array;
 }
 
-// 画面のボタンから呼ばれる関数
 function startQuiz(limit) {
     questionLimit = limit;
     document.getElementById("start-screen").style.display = "none";
@@ -84,7 +83,6 @@ async function fetchQuizData() {
                     explanation: row["解説"]
                 }));
 
-                // 選択された問題数だけ切り取る
                 quizData = shuffleArray([...allQuizData]).slice(0, questionLimit);
                 totalQNum.textContent = quizData.length;
                 loadQuestion();
@@ -100,7 +98,6 @@ function getRandomScript(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// --- 4. クイズの進行処理 ---
 function loadQuestion() {
     resultArea.style.display = "none";
     optionsArea.innerHTML = "";
@@ -170,13 +167,13 @@ nextBtn.onclick = () => {
     }
 };
 
-// --- 5. Firebaseへの保存とダブルグラフ描画 ---
+// --- 5. Firebaseへの保存と結果表示 ---
 async function saveAndShowFinalResult() {
     const cardContents = document.getElementById("quiz-contents");
     resultArea.style.display = "none"; 
     
     const percentage = Math.round((score / quizData.length) * 100);
-    const PASSING_BORDER = 70; // 仮想の合格ボーダー（70%）
+    const PASSING_BORDER = 70; 
 
     let finalScript = "";
     if (percentage === 100) finalScript = scripts.finish100;
@@ -184,7 +181,6 @@ async function saveAndShowFinalResult() {
     else finalScript = scripts.finishBad;
     teacherMessage.textContent = finalScript;
 
-    // ボーダーとの比較テキスト生成
     let comparisonHtml = "";
     if (percentage >= PASSING_BORDER) {
         comparisonHtml = `<h3 class="clear">TARGET CLEAR! 合格安全圏到達！</h3>`;
@@ -203,11 +199,9 @@ async function saveAndShowFinalResult() {
         </div>
 
         <div class="charts-container">
-            <!-- 1. 円グラフ（今回の正答・誤答比率） -->
             <div class="chart-wrapper">
                 <canvas id="doughnutChart"></canvas>
             </div>
-            <!-- 2. 線グラフ（過去の成長推移） -->
             <div class="chart-wrapper">
                 <canvas id="historyChart"></canvas>
             </div>
@@ -216,7 +210,6 @@ async function saveAndShowFinalResult() {
         <button class="next-btn final-retry-btn" style="margin-top:20px;" onclick="location.reload()">REBOOT SYSTEM (TOPへ戻る)</button>
     `;
 
-    // 円グラフ（Doughnut Chart）の描画
     drawDoughnutChart(score, quizData.length - score);
 
     try {
@@ -224,70 +217,49 @@ async function saveAndShowFinalResult() {
             score: score,
             total: quizData.length,
             percentage: percentage,
-            mode: questionLimit, // 何問モードで挑んだかも保存
+            mode: questionLimit, 
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        // 折れ線グラフの描画
         drawHistoryChart();
     } catch (error) {
         console.error("Firebaseへの保存に失敗しました", error);
-        teacherMessage.textContent = "「[WARNING] サーバーとの同期に失敗した！」";
+        teacherMessage.textContent = "起「[WARNING] サーバーとの同期に失敗した！」";
     }
 }
 
-// 今回の成績を円グラフで表示
 function drawDoughnutChart(correctCount, wrongCount) {
     const ctx = document.getElementById('doughnutChart').getContext('2d');
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['CORRECT (正解)', 'ERROR (不正解)'],
+            labels: ['CORRECT', 'ERROR'],
             datasets: [{
                 data: [correctCount, wrongCount],
-                backgroundColor: [
-                    'rgba(0, 255, 128, 0.6)', // ネオングリーン
-                    'rgba(255, 0, 85, 0.6)'   // ネオンレッド
-                ],
-                borderColor: [
-                    '#00ff80',
-                    '#ff0055'
-                ],
+                backgroundColor: ['rgba(0, 255, 128, 0.6)', 'rgba(255, 0, 85, 0.6)'],
+                borderColor: ['#00ff80', '#ff0055'],
                 borderWidth: 1
             }]
         },
         options: {
             cutout: '65%',
             plugins: {
-                legend: {
-                    labels: { color: '#e2e8f0', font: { family: 'Orbitron' } }
-                },
-                title: {
-                    display: true,
-                    text: 'CURRENT MISSION RESULT',
-                    color: '#00f3ff',
-                    font: { family: 'Orbitron', size: 16 }
-                }
+                legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } },
+                title: { display: true, text: 'CURRENT MISSION RESULT', color: '#00f3ff', font: { family: 'Orbitron', size: 16 } }
             }
         }
     });
 }
 
-// 過去の成績を折れ線グラフで表示
 async function drawHistoryChart() {
-    const snapshot = await db.collection("examResults")
-                             .orderBy("timestamp", "asc")
-                             .limit(10)
-                             .get();
-
+    const snapshot = await db.collection("examResults").orderBy("timestamp", "asc").limit(10).get();
     const labels = [];
     const dataPoints = [];
     let attempt = 1;
 
     snapshot.forEach(doc => {
-        const data = doc.data();
         labels.push("T-" + attempt);
-        dataPoints.push(data.percentage);
+        dataPoints.push(doc.data().percentage);
         attempt++;
     });
 
@@ -303,7 +275,6 @@ async function drawHistoryChart() {
                 backgroundColor: 'rgba(0, 243, 255, 0.1)',
                 borderWidth: 2,
                 pointBackgroundColor: '#00f3ff',
-                pointBorderColor: '#fff',
                 pointRadius: 4,
                 tension: 0.2,
                 fill: true
@@ -312,25 +283,97 @@ async function drawHistoryChart() {
         options: {
             plugins: {
                 legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } },
-                title: {
-                    display: true,
-                    text: 'GROWTH HISTORY (PAST 10)',
-                    color: '#00f3ff',
-                    font: { family: 'Orbitron', size: 16 }
-                }
+                title: { display: true, text: 'GROWTH HISTORY (PAST 10)', color: '#00f3ff', font: { family: 'Orbitron', size: 16 } }
             },
             scales: {
-                x: { 
-                    ticks: { color: '#94a3b8', font: { family: 'Orbitron' } },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
-                },
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: { color: '#94a3b8', font: { family: 'Orbitron' } },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
-                }
+                x: { ticks: { color: '#94a3b8', font: { family: 'Orbitron' } }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8', font: { family: 'Orbitron' } }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
             }
         }
     });
+}
+
+// --- ★新設：アーカイブ（統計・ログ画面）の制御ロジック★ ---
+async function openStatsScreen() {
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("stats-screen").style.display = "block";
+    teacherMessage.textContent = "「蓄積された戦闘データバンクを展開した。己の軌跡を確認しろ！」";
+
+    try {
+        // 全ての過去ログを取得（最新の日時順）
+        const snapshot = await db.collection("examResults").orderBy("timestamp", "desc").get();
+        
+        const now = new Date();
+        const oneWeekAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+        const oneMonthAgo = now.getTime() - (30 * 24 * 60 * 60 * 1000);
+
+        let weeklyTotalQuestions = 0;
+        let weeklyCorrectQuestions = 0;
+        let monthlyTotalQuestions = 0;
+        let monthlyCorrectQuestions = 0;
+
+        const logListContainer = document.getElementById("log-list");
+        logListContainer.innerHTML = ""; // 一旦クリア
+
+        if (snapshot.empty) {
+            logListContainer.innerHTML = `<p style="color: #64748b; text-align: center; font-size: 13px;">まだ戦闘データが記録されていません。</p>`;
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (!data.timestamp) return; // サーバー同期中のラグ回避
+
+            const examDate = data.timestamp.toDate();
+            const examTimeMs = examDate.getTime();
+
+            // 1. 週間統計（過去7日）の集計
+            if (examTimeMs >= oneWeekAgo) {
+                weeklyTotalQuestions += data.total;
+                weeklyCorrectQuestions += data.score;
+            }
+
+            // 2. 月間統計（過去30日）の集計
+            if (examTimeMs >= oneMonthAgo) {
+                monthlyTotalQuestions += data.total;
+                monthlyCorrectQuestions += data.score;
+            }
+
+            // 3. いつどのタイミングでやったかの日付フォーマット整形 (例: 05/31 14:30)
+            const dateStr = String(examDate.getMonth() + 1).padStart(2, '0') + "/" + 
+                            String(examDate.getDate()).padStart(2, '0') + " " + 
+                            String(examDate.getHours()).padStart(2, '0') + ":" + 
+                            String(examDate.getMinutes()).padStart(2, '0');
+
+            // 4. ログ一覧のHTML要素を生成
+            const pctClass = data.percentage >= 70 ? "" : "low";
+            const itemHtml = `
+                <div class="log-item">
+                    <span class="log-date">${dateStr}</span>
+                    <span class="log-meta">${data.mode}問MODE (${data.score}/${data.total})</span>
+                    <span class="log-pct ${pctClass}">${data.percentage}%</span>
+                </div>
+            `;
+            logListContainer.innerHTML += itemHtml;
+        });
+
+        // 画面上の数値を熱く書き換え
+        document.getElementById("weekly-count").innerHTML = `${weeklyTotalQuestions}<span>問</span>`;
+        const weeklyRate = weeklyTotalQuestions > 0 ? Math.round((weeklyCorrectQuestions / weeklyTotalQuestions) * 100) : 0;
+        document.getElementById("weekly-rate").innerHTML = `${weeklyRate}<span>%</span>`;
+
+        document.getElementById("monthly-count").innerHTML = `${monthlyTotalQuestions}<span>問</span>`;
+        const monthlyRate = monthlyTotalQuestions > 0 ? Math.round((monthlyCorrectQuestions / monthlyTotalQuestions) * 100) : 0;
+        document.getElementById("monthly-rate").innerHTML = `${monthlyRate}<span>%</span>`;
+
+    } catch (error) {
+        console.error("統計データの取得に失敗しました:", error);
+        document.getElementById("log-list").innerHTML = `<p style="color: #ff0055; text-align: center;">データの同期に失敗した。</p>`;
+    }
+}
+
+function closeStatsScreen() {
+    document.getElementById("stats-screen").style.display = "none";
+    document.getElementById("start-screen").style.display = "block";
+    teacherMessage.textContent = "「システム再起動... ミッションレベルを選択しろ！」";
 }
