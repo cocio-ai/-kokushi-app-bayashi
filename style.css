@@ -1,7 +1,12 @@
+/* ベース設定（ダークモード＆グリッド背景） */
 body {
-    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-    background-color: #f0f8ff;
-    color: #333;
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #050914;
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #e2e8f0;
     margin: 0;
     padding: 20px;
     display: flex;
@@ -13,34 +18,37 @@ body {
     max-width: 600px;
 }
 
-/* 先生エリア */
+/* AI教師エリア（ホログラム風） */
 .teacher-area {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .teacher-icon {
-    font-size: 50px;
+    font-size: 45px;
     margin-right: 15px;
-    animation: bounce 2s infinite;
+    filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.8));
+    animation: float 3s ease-in-out infinite;
 }
 
-@keyframes bounce {
+@keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
 }
 
 .balloon {
-    background-color: #fff;
-    border: 3px solid #e74c3c;
-    border-radius: 15px;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(5px);
+    border: 1px solid #00f3ff;
+    border-radius: 4px;
     padding: 15px;
     position: relative;
     flex-grow: 1;
     font-weight: bold;
-    color: #e74c3c;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    color: #00f3ff;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2) inset, 0 0 10px rgba(0, 243, 255, 0.3);
+    letter-spacing: 1px;
 }
 
 .balloon::before {
@@ -50,35 +58,40 @@ body {
     top: 50%;
     transform: translateY(-50%);
     border-style: solid;
-    border-width: 10px 15px 10px 0;
-    border-color: transparent #e74c3c transparent transparent;
+    border-width: 8px 12px 8px 0;
+    border-color: transparent #00f3ff transparent transparent;
 }
 
-/* クイズカード */
+/* クイズパネル本体（グラスモーフィズム） */
 .quiz-card {
-    background-color: #fff;
-    border-radius: 15px;
+    background: rgba(10, 15, 30, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-top: 3px solid #00f3ff;
+    border-radius: 8px;
     padding: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
 }
 
 .q-progress {
-    text-align: center;
-    font-size: 14px;
-    color: #7f8c8d;
-    margin-bottom: 10px;
-    font-weight: bold;
+    text-align: right;
+    font-size: 16px;
+    color: #00f3ff;
+    margin-bottom: 15px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
 }
 
 .question-text {
     font-size: 18px;
     line-height: 1.6;
     margin-bottom: 25px;
-    border-bottom: 2px dashed #bdc3c7;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.3);
     padding-bottom: 15px;
 }
 
-/* 選択肢ボタン */
+/* 選択肢ボタン（サイバーUI） */
 .options-container {
     display: flex;
     flex-direction: column;
@@ -86,102 +99,117 @@ body {
 }
 
 .option-btn {
-    background-color: #f8f9fa;
-    border: 2px solid #bdc3c7;
-    border-radius: 8px;
+    background-color: rgba(0, 243, 255, 0.05);
+    border: 1px solid #38bdf8;
+    color: #e2e8f0;
+    border-radius: 4px;
     padding: 15px;
     font-size: 16px;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .option-btn:hover {
-    background-color: #e2e8f0;
+    background-color: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 .option-btn:disabled {
     cursor: not-allowed;
 }
 
-/* 正解・不正解の色 */
+/* 正解・不正解のネオン発光 */
 .option-btn.selected {
-    border-color: #3498db;
-    background-color: #ebf5fb;
+    background-color: rgba(0, 243, 255, 0.3);
+    border-color: #00f3ff;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
 }
 
 .option-btn.correct {
-    background-color: #d4edda;
-    border-color: #28a745;
-    color: #155724;
-    font-weight: bold;
+    background-color: rgba(0, 255, 128, 0.15);
+    border-color: #00ff80;
+    color: #00ff80;
+    box-shadow: 0 0 15px rgba(0, 255, 128, 0.3) inset, 0 0 10px rgba(0, 255, 128, 0.5);
+    text-shadow: 0 0 5px rgba(0, 255, 128, 0.5);
 }
 
 .option-btn.wrong {
-    background-color: #f8d7da;
-    border-color: #dc3545;
-    color: #721c24;
-    opacity: 0.6;
+    background-color: rgba(255, 0, 85, 0.15);
+    border-color: #ff0055;
+    color: #ff0055;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.3) inset, 0 0 10px rgba(255, 0, 85, 0.5);
 }
 
 /* 結果エリア */
 .result-container {
     margin-top: 25px;
-    animation: fadeIn 0.5s;
+    animation: scanline 0.5s ease-out;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+@keyframes scanline {
+    from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .explanation-box {
-    background-color: #fff3cd;
-    border-left: 5px solid #ffc107;
+    background-color: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid #f59e0b;
     padding: 15px;
     margin-bottom: 20px;
-    border-radius: 5px;
+    border-radius: 0 4px 4px 0;
 }
 
 .explanation-box h3 {
     margin: 0 0 10px 0;
-    font-size: 16px;
-    color: #856404;
+    font-size: 14px;
+    color: #f59e0b;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
 }
 
 .explanation-box p {
     margin: 0;
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
+/* NEXTボタン */
 .next-btn {
     display: block;
     width: 100%;
-    background-color: #e74c3c;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
+    background-color: transparent;
+    color: #00f3ff;
+    border: 1px solid #00f3ff;
+    border-radius: 4px;
     padding: 15px;
     font-size: 18px;
+    font-family: 'Orbitron', sans-serif;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3);
-    transition: background-color 0.2s;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset;
+    transition: all 0.3s;
+    letter-spacing: 2px;
 }
 
 .next-btn:hover {
-    background-color: #c0392b;
+    background-color: #00f3ff;
+    color: #050914;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
 }
 
-/* 最終結果画面用 */
+/* 最終結果画面 */
 .final-result-screen {
     text-align: center;
 }
 
 .final-score {
-    font-size: 60px;
+    font-size: 70px;
+    font-family: 'Orbitron', sans-serif;
     font-weight: bold;
-    color: #e74c3c;
+    color: #00f3ff;
+    text-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
     margin: 10px 0;
 }
