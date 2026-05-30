@@ -1,4 +1,4 @@
-/* ベース設定（ダークモード＆グリッド背景） */
+/* ベース設定 */
 body {
     font-family: 'Noto Sans JP', sans-serif;
     background-color: #050914;
@@ -18,7 +18,7 @@ body {
     max-width: 600px;
 }
 
-/* AI教師エリア（ホログラム風） */
+/* AI教師エリア */
 .teacher-area {
     display: flex;
     align-items: center;
@@ -62,7 +62,57 @@ body {
     border-color: transparent #00f3ff transparent transparent;
 }
 
-/* クイズパネル本体（グラスモーフィズム） */
+/* ★スタート画面（モード選択）★ */
+.start-screen {
+    background: rgba(10, 15, 30, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
+}
+
+.cyber-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #00f3ff;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    margin-bottom: 25px;
+}
+
+.mode-btn {
+    display: block;
+    width: 100%;
+    background-color: rgba(0, 243, 255, 0.05);
+    border: 1px solid #00f3ff;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.mode-btn:hover {
+    background-color: rgba(0, 243, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+    transform: scale(1.02);
+}
+
+.mode-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    color: #00f3ff;
+    margin-bottom: 5px;
+}
+
+.mode-time {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* クイズパネル本体 */
 .quiz-card {
     background: rgba(10, 15, 30, 0.6);
     backdrop-filter: blur(12px);
@@ -80,7 +130,6 @@ body {
     margin-bottom: 15px;
     font-family: 'Orbitron', sans-serif;
     letter-spacing: 2px;
-    text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
 }
 
 .question-text {
@@ -91,7 +140,7 @@ body {
     padding-bottom: 15px;
 }
 
-/* 選択肢ボタン（サイバーUI） */
+/* 選択肢ボタン */
 .options-container {
     display: flex;
     flex-direction: column;
@@ -108,8 +157,6 @@ body {
     text-align: left;
     cursor: pointer;
     transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
 }
 
 .option-btn:hover {
@@ -121,7 +168,6 @@ body {
     cursor: not-allowed;
 }
 
-/* 正解・不正解のネオン発光 */
 .option-btn.selected {
     background-color: rgba(0, 243, 255, 0.3);
     border-color: #00f3ff;
@@ -133,7 +179,6 @@ body {
     border-color: #00ff80;
     color: #00ff80;
     box-shadow: 0 0 15px rgba(0, 255, 128, 0.3) inset, 0 0 10px rgba(0, 255, 128, 0.5);
-    text-shadow: 0 0 5px rgba(0, 255, 128, 0.5);
 }
 
 .option-btn.wrong {
@@ -143,7 +188,7 @@ body {
     box-shadow: 0 0 15px rgba(255, 0, 85, 0.3) inset, 0 0 10px rgba(255, 0, 85, 0.5);
 }
 
-/* 結果エリア */
+/* 解説エリア */
 .result-container {
     margin-top: 25px;
     animation: scanline 0.5s ease-out;
@@ -167,7 +212,6 @@ body {
     font-size: 14px;
     color: #f59e0b;
     font-family: 'Orbitron', sans-serif;
-    letter-spacing: 1px;
 }
 
 .explanation-box p {
@@ -191,7 +235,6 @@ body {
     cursor: pointer;
     box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset;
     transition: all 0.3s;
-    letter-spacing: 2px;
 }
 
 .next-btn:hover {
@@ -200,16 +243,51 @@ body {
     box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
 }
 
-/* 最終結果画面 */
+/* ★最終結果画面★ */
 .final-result-screen {
     text-align: center;
 }
 
 .final-score {
-    font-size: 70px;
+    font-size: 60px;
     font-family: 'Orbitron', sans-serif;
     font-weight: bold;
     color: #00f3ff;
     text-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
     margin: 10px 0;
+}
+
+/* ボーダー比較ボックス */
+.comparison-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed #00f3ff;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+.comparison-box p {
+    margin: 0 0 5px 0;
+    font-size: 12px;
+    color: #94a3b8;
+}
+.comparison-box h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #00ff80;
+}
+.comparison-box h3.warning {
+    color: #f59e0b;
+}
+
+/* グラフを横並びor縦並びにするコンテナ */
+.charts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+.chart-wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin-inline: auto;
 }
