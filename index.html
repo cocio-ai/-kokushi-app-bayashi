@@ -6,7 +6,6 @@
     <title>がんばれバヤシ！国試一直線</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- 近未来風フォント -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -16,7 +15,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- 先生の熱血サイバーエリア -->
         <div class="teacher-area">
             <div class="teacher-icon">🤖</div>
             <div class="balloon">
@@ -24,7 +22,6 @@
             </div>
         </div>
 
-        <!-- ★スタート画面（モード選択）★ -->
         <div class="start-screen" id="start-screen">
             <h2 class="cyber-title">SELECT MISSION LEVEL</h2>
             
@@ -42,9 +39,12 @@
                 <div class="mode-title">SYSTEM MASTER (30問)</div>
                 <div class="mode-time">EST. TIME: 約12分 / 限界突破のフル特訓</div>
             </button>
+
+            <button class="archive-btn" onclick="openStatsScreen()">
+                [ ARCHIVE ] 統計・ログデータを確認する
+            </button>
         </div>
 
-        <!-- 問題出題ホログラムパネル（最初は非表示） -->
         <div class="quiz-card" id="quiz-contents" style="display: none;">
             <div class="q-progress">MISSION <span id="current-q-num">-</span> / <span id="total-q-num">-</span></div>
             <h2 class="question-text" id="question-text">Loading...</h2>
@@ -58,6 +58,34 @@
                 </div>
                 <button class="next-btn" id="next-btn">NEXT MISSION &gt;&gt;</button>
             </div>
+        </div>
+
+        <div class="quiz-card" id="stats-screen" style="display: none;">
+            <h2 class="cyber-title" style="text-align: center;">DATA CENTER</h2>
+            
+            <div class="stats-summary-container">
+                <div class="stats-summary-card weekly">
+                    <h4>WEEKLY (7日間)</h4>
+                    <div class="stats-val" id="weekly-count">0<span>問</span></div>
+                    <div class="stats-label">挑戦問題数</div>
+                    <div class="stats-val" id="weekly-rate">0<span>%</span></div>
+                    <div class="stats-label">平均正答率</div>
+                </div>
+                <div class="stats-summary-card monthly">
+                    <h4>MONTHLY (30日間)</h4>
+                    <div class="stats-val" id="monthly-count">0<span>問</span></div>
+                    <div class="stats-label">挑戦問題数</div>
+                    <div class="stats-val" id="monthly-rate">0<span>%</span></div>
+                    <div class="stats-label">平均正答率</div>
+                </div>
+            </div>
+
+            <h3 style="color: #00f3ff; font-family: 'Orbitron'; font-size: 14px; margin-top: 25px; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 5px;">LOG HISTORY</h3>
+            <div class="log-list" id="log-list">
+                <p style="color: #64748b; text-align: center; font-size: 13px;">ログデータを展開中...</p>
+            </div>
+
+            <button class="next-btn" style="margin-top: 20px;" onclick="closeStatsScreen()">&lt;&lt; BACK TO MENU</button>
         </div>
     </div>
 
