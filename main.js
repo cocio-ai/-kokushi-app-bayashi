@@ -157,6 +157,10 @@ function checkAnswer(chosenIndex, chosenBtn) {
     }
 }
 
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 nextBtn.onclick = () => {
     currentIndex++;
     selectedIndex = null; 
@@ -164,6 +168,7 @@ nextBtn.onclick = () => {
         loadQuestion();
     } else {
         saveAndShowFinalResult();
+        setTimeout(scrollToTop, 100);
     }
 };
 
@@ -293,11 +298,12 @@ async function drawHistoryChart() {
     });
 }
 
-// --- ★新設：アーカイブ（統計・ログ画面）の制御ロジック★ ---
+// --- アーカイブ（統計・ログ画面）の制御ロジック ---
 async function openStatsScreen() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("stats-screen").style.display = "block";
     teacherMessage.textContent = "「蓄積された戦闘データバンクを展開した。己の軌跡を確認しろ！」";
+    setTimeout(scrollToTop, 50);
 
     try {
         const snapshot = await db.collection("examResults").orderBy("timestamp", "desc").get();
@@ -370,4 +376,5 @@ function closeStatsScreen() {
     document.getElementById("stats-screen").style.display = "none";
     document.getElementById("start-screen").style.display = "block";
     teacherMessage.textContent = "「システム再起動... ミッションレベルを選択しろ！」";
+    setTimeout(scrollToTop, 50);
 }
