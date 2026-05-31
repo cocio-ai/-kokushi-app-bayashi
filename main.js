@@ -13,7 +13,6 @@ if (!firebase.apps.length) {
 }
 const db = firebase.firestore();
 
-// --- 2. 変数と設定 ---
 let allQuizData = []; 
 let quizData = [];    
 let currentIndex = 0;
@@ -22,23 +21,24 @@ let questionLimit = 10;
 
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/11zzNYvPn6RgirwpnYVnnpSyFEH109JGbOPlVr35wIqw/export?format=csv";
 
+// ★熱血教官のセリフ集★
 const scripts = {
     encourage: [
-        "「思考回路をフル回転させろ！」",
-        "「迷うな！過去のデータを信じろ！」",
-        "「エラーを恐れるな！アップデートのチャンスだ！」"
+        "「その意気だ！もっと熱くなれ！」",
+        "「迷うな！自分の努力を信じろ！」",
+        "「苦しい時こそ成長のチャンスだ！いけー！」"
     ],
     correct: [
-        "「[SUCCESS] 見事だ！その直感、研ぎ澄まされているぞ！」",
-        "「[CLEAR] 大正解！シナプスが繋がったな！」"
+        "「ナイス！その答え、最高に熱いぜ！」",
+        "「大正解！今の君は誰よりも輝いてるぞ！」"
     ],
     wrong: [
-        "「[ERROR] ドンマイだ！この失敗を次期アップデートに活かせ！」",
-        "「[WARNING] 軌道修正が必要だ！解説データをインストールしろ！」"
+        "「ドンマイ！失敗は成功のもとだ！次で取り返すぞ！」",
+        "「惜しい！解説を読んで確実にモノにしろ！」"
     ],
-    finish100: "「[PERFECT] 驚異的な処理能力だ！お前の情熱がシステムを超えたぞ！」",
-    finishGreat: "「[MISSION COMPLETE] 合格ボーダー突破！確実な進化を検知したぞ！」",
-    finishBad: "「[RETRY REQUIRED] まだポテンシャルを引き出しきれていない！再起動だ！」"
+    finish100: "「完璧だ！この満点は、お前の情熱の証だ！🔥」",
+    finishGreat: "「よく頑張った！合格ボーダー突破だ！その調子で突っ走れ！」",
+    finishBad: "「どうした！お前の力はこんなもんじゃないはずだ！もう1回だ！」"
 };
 
 const teacherMessage = document.getElementById("teacher-message");
@@ -50,7 +50,6 @@ const resultArea = document.getElementById("result-area");
 const explanationText = document.getElementById("explanation");
 const nextBtn = document.getElementById("next-btn");
 
-// --- 3. クイズ制御ロジック ---
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -63,7 +62,7 @@ function startQuiz(limit) {
     questionLimit = limit;
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("quiz-contents").style.display = "block";
-    teacherMessage.textContent = `「ターゲット確認。${limit}問の特訓を開始する！」`;
+    teacherMessage.textContent = `「気合を入れろ！${limit}問の特訓を開始するぞ！」`;
     fetchQuizData();
 }
 
@@ -90,7 +89,7 @@ async function fetchQuizData() {
         });
     } catch (error) {
         console.error("データの読み込みに失敗しました:", error);
-        teacherMessage.textContent = "「[FATAL ERROR] データベースへの接続に失敗した！」";
+        teacherMessage.textContent = "「エラーだ！通信環境を確認してくれ！」";
     }
 }
 
@@ -153,7 +152,7 @@ function checkAnswer(chosenIndex, chosenBtn) {
     resultArea.style.display = "block";
 
     if (currentIndex === quizData.length - 1) {
-        nextBtn.textContent = "SHOW RESULTS >>";
+        nextBtn.textContent = "特訓結果を見る！ >>";
     }
 }
 
@@ -172,7 +171,6 @@ nextBtn.onclick = () => {
     }
 };
 
-// --- 5. Firebaseへの保存と結果表示 ---
 async function saveAndShowFinalResult() {
     const cardContents = document.getElementById("quiz-contents");
     resultArea.style.display = "none"; 
@@ -195,7 +193,7 @@ async function saveAndShowFinalResult() {
 
     cardContents.classList.add("final-result-screen");
     cardContents.innerHTML = `
-        <h2 style="color:#00f3ff; font-family:'Orbitron', sans-serif;">SYSTEM REPORT</h2>
+        <h2 style="color:#00f3ff; font-family:'Orbitron', sans-serif;">熱血！特訓レポート</h2>
         <div class="final-score">${percentage}%</div>
         
         <div class="comparison-box">
@@ -212,7 +210,7 @@ async function saveAndShowFinalResult() {
             </div>
         </div>
 
-        <button class="next-btn final-retry-btn" style="margin-top:20px;" onclick="location.reload()">REBOOT SYSTEM (TOPへ戻る)</button>
+        <button class="next-btn final-retry-btn" style="margin-top:20px;" onclick="location.reload()">トップに戻る</button>
     `;
 
     drawDoughnutChart(score, quizData.length - score);
@@ -229,7 +227,7 @@ async function saveAndShowFinalResult() {
         drawHistoryChart();
     } catch (error) {
         console.error("Firebaseへの保存に失敗しました", error);
-        teacherMessage.textContent = "「[WARNING] サーバーとの同期に失敗した！」";
+        teacherMessage.textContent = "「通信エラーだ！だかお前の努力は無駄じゃないぞ！」";
     }
 }
 
@@ -238,7 +236,7 @@ function drawDoughnutChart(correctCount, wrongCount) {
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['CORRECT', 'ERROR'],
+            labels: ['正解', '不正解'],
             datasets: [{
                 data: [correctCount, wrongCount],
                 backgroundColor: ['rgba(0, 255, 128, 0.6)', 'rgba(255, 0, 85, 0.6)'],
@@ -249,8 +247,8 @@ function drawDoughnutChart(correctCount, wrongCount) {
         options: {
             cutout: '65%',
             plugins: {
-                legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } },
-                title: { display: true, text: 'CURRENT MISSION RESULT', color: '#00f3ff', font: { family: 'Orbitron', size: 16 } }
+                legend: { labels: { color: '#e2e8f0', font: { family: 'Noto Sans JP' } } },
+                title: { display: true, text: '今回の成績', color: '#00f3ff', font: { family: 'Noto Sans JP', size: 16 } }
             }
         }
     });
@@ -274,7 +272,7 @@ async function drawHistoryChart() {
         data: {
             labels: labels,
             datasets: [{
-                label: 'ACCURACY (%)',
+                label: '正答率 (%)',
                 data: dataPoints,
                 borderColor: '#00f3ff',
                 backgroundColor: 'rgba(0, 243, 255, 0.1)',
@@ -287,8 +285,8 @@ async function drawHistoryChart() {
         },
         options: {
             plugins: {
-                legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } },
-                title: { display: true, text: 'GROWTH HISTORY (PAST 10)', color: '#00f3ff', font: { family: 'Orbitron', size: 16 } }
+                legend: { labels: { color: '#e2e8f0', font: { family: 'Noto Sans JP' } } },
+                title: { display: true, text: '過去10回の成長記録', color: '#00f3ff', font: { family: 'Noto Sans JP', size: 16 } }
             },
             scales: {
                 x: { ticks: { color: '#94a3b8', font: { family: 'Orbitron' } }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
@@ -298,11 +296,10 @@ async function drawHistoryChart() {
     });
 }
 
-// --- アーカイブ（統計・ログ画面）の制御ロジック ---
 async function openStatsScreen() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("stats-screen").style.display = "block";
-    teacherMessage.textContent = "「蓄積された戦闘データバンクを展開した。己の軌跡を確認しろ！」";
+    teacherMessage.textContent = "「お前の過去の戦歴だ！しっかり振り返れ！」";
     setTimeout(scrollToTop, 50);
 
     try {
@@ -321,7 +318,7 @@ async function openStatsScreen() {
         logListContainer.innerHTML = ""; 
 
         if (snapshot.empty) {
-            logListContainer.innerHTML = `<p style="color: #64748b; text-align: center; font-size: 13px;">まだ戦闘データが記録されていません。</p>`;
+            logListContainer.innerHTML = `<p style="color: #64748b; text-align: center; font-size: 13px;">まだ戦歴がないぞ！特訓開始だ！</p>`;
             return;
         }
 
@@ -351,7 +348,7 @@ async function openStatsScreen() {
             const itemHtml = `
                 <div class="log-item">
                     <span class="log-date">${dateStr}</span>
-                    <span class="log-meta">${data.mode}問MODE (${data.score}/${data.total})</span>
+                    <span class="log-meta">${data.mode}問モード (${data.score}/${data.total})</span>
                     <span class="log-pct ${pctClass}">${data.percentage}%</span>
                 </div>
             `;
@@ -368,13 +365,13 @@ async function openStatsScreen() {
 
     } catch (error) {
         console.error("統計データの取得に失敗しました:", error);
-        document.getElementById("log-list").innerHTML = `<p style="color: #ff0055; text-align: center;">データの同期に失敗した。</p>`;
+        document.getElementById("log-list").innerHTML = `<p style="color: #ff0055; text-align: center;">データの取得に失敗した！</p>`;
     }
 }
 
 function closeStatsScreen() {
     document.getElementById("stats-screen").style.display = "none";
     document.getElementById("start-screen").style.display = "block";
-    teacherMessage.textContent = "「システム再起動... ミッションレベルを選択しろ！」";
+    teacherMessage.textContent = "「よし！今日も限界を突破するぞ！特訓メニューを選べ！」";
     setTimeout(scrollToTop, 50);
 }
