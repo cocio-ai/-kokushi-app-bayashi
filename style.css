@@ -18,28 +18,29 @@ body {
     max-width: 600px;
 }
 
-/* AI教師エリア（画像変更！） */
+/* AI教師エリア */
 .teacher-area {
     display: flex;
     align-items: center;
     margin-bottom: 25px;
 }
 
+/* ★顔ドアップ・完全円形サイバー仕様★ */
 .teacher-icon {
-    width: 65px;
-    height: 65px;
+    width: 60px;  /* 顔がしっかり見えるように少しだけ拡大 */
+    height: 60px;
     margin-right: 15px;
-    border-radius: 50%; /* まん丸にする */
-    border: 2px solid #00f3ff; /* ネオンの枠線 */
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.8); /* 外側に光を放つ */
-    object-fit: cover; /* 画像が歪まないように調整 */
-    background-color: #fff; /* 背景を白にしてイラストを目立たせる */
+    border-radius: 50%; /* 完璧な真ん丸 */
+    border: 2px solid #00f3ff; /* ネオン枠 */
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+    object-fit: cover; /* 枠いっぱいに顔を敷き詰める指定 */
+    background-color: #050914; /* 背景色をサイバーに馴染ませる */
     animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50% { transform: translateY(-6px); }
 }
 
 .balloon {
