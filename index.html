@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>がんばれバヤシ！国試一直線</title>
     <link rel="stylesheet" href="style.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -16,9 +15,12 @@
 <body>
     <div class="app-container">
         <div class="teacher-area">
-            <img src="kaniwo.png" alt="かにを先生" class="teacher-icon">
+            <div class="teacher-profile">
+                <img src="kaniwo.png" alt="かにお教官" class="teacher-icon">
+                <div class="teacher-name">かにお教官</div>
+            </div>
             <div class="balloon">
-                <p id="teacher-message">「システム起動... ミッションレベルを選択しろ！」</p>
+                <p id="teacher-message">「よし！今日も限界を突破するぞ！特訓メニューを選べ！」</p>
             </div>
         </div>
 
@@ -88,7 +90,6 @@
             <button class="next-btn" style="margin-top: 20px;" onclick="closeStatsScreen()">&lt;&lt; BACK TO MENU</button>
         </div>
     </div>
-
     <script src="main.js"></script>
 </body>
 </html>
