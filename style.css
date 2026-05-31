@@ -12,11 +12,7 @@ body {
     display: flex;
     justify-content: center;
 }
-
-.app-container {
-    width: 100%;
-    max-width: 600px;
-}
+.app-container { width: 100%; max-width: 600px; }
 
 /* AI教師エリア */
 .teacher-area {
@@ -25,17 +21,32 @@ body {
     margin-bottom: 25px;
 }
 
-/* ★顔ドアップ・完全円形サイバー仕様★ */
-.teacher-icon {
-    width: 60px;  /* 顔がしっかり見えるように少しだけ拡大 */
-    height: 60px;
+/* ★かにお教官プロフ（画像＋名前）★ */
+.teacher-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-right: 15px;
-    border-radius: 50%; /* 完璧な真ん丸 */
-    border: 2px solid #00f3ff; /* ネオン枠 */
+    min-width: 70px;
+}
+.teacher-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #00f3ff;
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
-    object-fit: cover; /* 枠いっぱいに顔を敷き詰める指定 */
-    background-color: #050914; /* 背景色をサイバーに馴染ませる */
+    object-fit: cover;
+    background-color: #050914;
     animation: float 3s ease-in-out infinite;
+}
+.teacher-name {
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #00f3ff;
+    text-align: center;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
 }
 
 @keyframes float {
@@ -55,191 +66,61 @@ body {
     color: #00f3ff;
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.2) inset, 0 0 10px rgba(0, 243, 255, 0.3);
     letter-spacing: 1px;
+    line-height: 1.4;
 }
-
 .balloon::before {
-    content: '';
-    position: absolute;
-    left: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-style: solid;
-    border-width: 8px 12px 8px 0;
-    border-color: transparent #00f3ff transparent transparent;
+    content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+    border-style: solid; border-width: 8px 12px 8px 0; border-color: transparent #00f3ff transparent transparent;
 }
 
-/* スタート画面 */
+/* スタート画面・ボタン類 */
 .start-screen {
-    background: rgba(10, 15, 30, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 243, 255, 0.3);
-    border-radius: 8px;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
+    background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 8px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
 }
-
-.cyber-title {
-    font-family: 'Orbitron', sans-serif;
-    color: #00f3ff;
-    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-    margin-bottom: 25px;
-}
-
+.cyber-title { font-family: 'Orbitron', sans-serif; color: #00f3ff; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); margin-bottom: 25px; }
 .mode-btn {
-    display: block;
-    width: 100%;
-    background-color: rgba(0, 243, 255, 0.05);
-    border: 1px solid #38bdf8;
-    border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: left;
+    display: block; width: 100%; background-color: rgba(0, 243, 255, 0.05); border: 1px solid #38bdf8;
+    border-radius: 4px; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s; text-align: left;
 }
-
-.mode-btn:hover {
-    background-color: rgba(56, 189, 248, 0.2);
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-    transform: scale(1.02);
-}
-
-.mode-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 20px;
-    font-weight: bold;
-    color: #38bdf8;
-    margin-bottom: 5px;
-}
-
-.mode-time {
-    font-size: 13px;
-    color: #94a3b8;
-}
-
-/* ログ画面起動用のボタン */
+.mode-btn:hover { background-color: rgba(56, 189, 248, 0.2); box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); transform: scale(1.02); }
+.mode-title { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: bold; color: #38bdf8; margin-bottom: 5px; }
+.mode-time { font-size: 13px; color: #94a3b8; }
 .archive-btn {
-    display: block;
-    width: 100%;
-    background-color: rgba(245, 158, 11, 0.1);
-    border: 1px dashed #f59e0b;
-    color: #f59e0b;
-    border-radius: 4px;
-    padding: 12px;
-    margin-top: 25px;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
+    display: block; width: 100%; background-color: rgba(245, 158, 11, 0.1); border: 1px dashed #f59e0b; color: #f59e0b;
+    border-radius: 4px; padding: 12px; margin-top: 25px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; transition: all 0.3s;
 }
+.archive-btn:hover { background-color: rgba(245, 158, 11, 0.2); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
 
-.archive-btn:hover {
-    background-color: rgba(245, 158, 11, 0.2);
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-}
-
-/* クイズ・統計パネル共通 */
+/* クイズパネル */
 .quiz-card {
-    background: rgba(10, 15, 30, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 243, 255, 0.3);
-    border-top: 3px solid #00f3ff;
-    border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
+    background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(0, 243, 255, 0.3);
+    border-top: 3px solid #00f3ff; border-radius: 8px; padding: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
 }
-
-.q-progress {
-    text-align: right;
-    font-size: 16px;
-    color: #00f3ff;
-    margin-bottom: 15px;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 2px;
-}
-
-.question-text {
-    font-size: 18px;
-    line-height: 1.6;
-    margin-bottom: 25px;
-    border-bottom: 1px solid rgba(0, 243, 255, 0.3);
-    padding-bottom: 15px;
-}
-
-/* 選択肢ボタン */
-.options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
+.q-progress { text-align: right; font-size: 16px; color: #00f3ff; margin-bottom: 15px; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; }
+.question-text { font-size: 18px; line-height: 1.6; margin-bottom: 25px; border-bottom: 1px solid rgba(0, 243, 255, 0.3); padding-bottom: 15px; }
+.options-container { display: flex; flex-direction: column; gap: 12px; }
 .option-btn {
-    background-color: rgba(0, 243, 255, 0.05);
-    border: 1px solid #38bdf8;
-    color: #e2e8f0;
-    border-radius: 4px;
-    padding: 15px;
-    font-size: 16px;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.3s;
+    background-color: rgba(0, 243, 255, 0.05); border: 1px solid #38bdf8; color: #e2e8f0; border-radius: 4px;
+    padding: 15px; font-size: 16px; text-align: left; cursor: pointer; transition: all 0.3s;
 }
+.option-btn:hover { background-color: rgba(56, 189, 248, 0.2); box-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+.option-btn.selected { background-color: rgba(0, 243, 255, 0.3); border-color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+.option-btn.correct { background-color: rgba(0, 255, 128, 0.15); border-color: #00ff80; color: #00ff80; box-shadow: 0 0 15px rgba(0, 255, 128, 0.3) inset, 0 0 10px rgba(0, 255, 128, 0.5); }
+.option-btn.wrong { background-color: rgba(255, 0, 85, 0.15); border-color: #ff0055; color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.3) inset, 0 0 10px rgba(255, 0, 85, 0.5); }
 
-.option-btn:hover {
-    background-color: rgba(56, 189, 248, 0.2);
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-}
-
-.option-btn.selected {
-    background-color: rgba(0, 243, 255, 0.3);
-    border-color: #00f3ff;
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-}
-
-.option-btn.correct {
-    background-color: rgba(0, 255, 128, 0.15);
-    border-color: #00ff80;
-    color: #00ff80;
-    box-shadow: 0 0 15px rgba(0, 255, 128, 0.3) inset, 0 0 10px rgba(0, 255, 128, 0.5);
-}
-
-.option-btn.wrong {
-    background-color: rgba(255, 0, 85, 0.15);
-    border-color: #ff0055;
-    color: #ff0055;
-    box-shadow: 0 0 15px rgba(255, 0, 85, 0.3) inset, 0 0 10px rgba(255, 0, 85, 0.5);
-}
-
-/* 解説エリア */
+/* 解説エリア・NEXTボタン */
 .result-container { margin-top: 25px; }
-
-.explanation-box {
-    background-color: rgba(245, 158, 11, 0.1);
-    border-left: 4px solid #f59e0b;
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-.explanation-box h3 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    color: #f59e0b;
-    font-family: 'Orbitron', sans-serif;
-}
-
+.explanation-box { background-color: rgba(245, 158, 11, 0.1); border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 20px; }
+.explanation-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #f59e0b; font-family: 'Orbitron', sans-serif; }
 .explanation-box p { margin: 0; font-size: 15px; line-height: 1.6; }
-
 .next-btn {
-    display: block; width: 100%; background-color: transparent; color: #00f3ff;
-    border: 1px solid #00f3ff; border-radius: 4px; padding: 15px;
-    font-size: 18px; font-family: 'Orbitron', sans-serif; font-weight: bold;
-    cursor: pointer; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset; transition: all 0.3s;
+    display: block; width: 100%; background-color: transparent; color: #00f3ff; border: 1px solid #00f3ff; border-radius: 4px;
+    padding: 15px; font-size: 18px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset; transition: all 0.3s;
 }
-
 .next-btn:hover { background-color: #00f3ff; color: #050914; box-shadow: 0 0 20px rgba(0, 243, 255, 0.6); }
 
-/* 最終結果画面 */
+/* 最終結果・グラフ */
 .final-result-screen { text-align: center; }
 .final-score { font-size: 60px; font-family: 'Orbitron'; font-weight: bold; color: #00f3ff; text-shadow: 0 0 20px rgba(0, 243, 255, 0.6); margin: 10px 0; }
 .comparison-box { background: rgba(255, 255, 255, 0.05); border: 1px dashed #00f3ff; padding: 15px; margin: 20px 0; border-radius: 4px; }
@@ -249,66 +130,21 @@ body {
 .charts-container { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
 .chart-wrapper { width: 100%; max-width: 400px; margin-inline: auto; }
 
-/* 週間・月間統計デザイン */
-.stats-summary-container {
-    display: flex;
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.stats-summary-card {
-    flex: 1;
-    background: rgba(255,255,255,0.03);
-    border-radius: 6px;
-    padding: 15px;
-    text-align: center;
-}
+/* 統計デザイン */
+.stats-summary-container { display: flex; gap: 15px; margin-top: 15px; }
+.stats-summary-card { flex: 1; background: rgba(255,255,255,0.03); border-radius: 6px; padding: 15px; text-align: center; }
 .stats-summary-card.weekly { border: 1px solid rgba(56, 189, 248, 0.3); }
 .stats-summary-card.monthly { border: 1px solid rgba(168, 85, 247, 0.3); }
-
-.stats-summary-card h4 {
-    margin: 0 0 10px 0;
-    font-family: 'Orbitron';
-    font-size: 13px;
-    letter-spacing: 1px;
-}
+.stats-summary-card h4 { margin: 0 0 10px 0; font-family: 'Orbitron'; font-size: 13px; letter-spacing: 1px; }
 .stats-summary-card.weekly h4 { color: #38bdf8; }
 .stats-summary-card.monthly h4 { color: #a855f7; }
-
-.stats-val {
-    font-family: 'Orbitron';
-    font-size: 26px;
-    font-weight: bold;
-    color: #fff;
-    margin-top: 5px;
-}
+.stats-val { font-family: 'Orbitron'; font-size: 26px; font-weight: bold; color: #fff; margin-top: 5px; }
 .stats-val span { font-size: 12px; margin-left: 2px; color: #94a3b8; }
 .stats-label { font-size: 11px; color: #64748b; margin-bottom: 8px; }
-
-/* タイムスタンプ付履歴ログリスト */
-.log-list {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-right: 5px;
-}
-/* スクロールバーカスタム */
+.log-list { max-height: 200px; overflow-y: auto; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
 .log-list::-webkit-scrollbar { width: 4px; }
 .log-list::-webkit-scrollbar-thumb { background: #00f3ff; border-radius: 2px; }
-
-.log-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255,255,255,0.02);
-    border-left: 3px solid #38bdf8;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-family: 'Orbitron', 'Noto Sans JP';
-}
+.log-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border-left: 3px solid #38bdf8; padding: 8px 12px; font-size: 13px; font-family: 'Orbitron', 'Noto Sans JP'; }
 .log-date { color: #94a3b8; font-size: 12px; }
 .log-meta { color: #38bdf8; }
 .log-pct { font-weight: bold; color: #00ff80; }
