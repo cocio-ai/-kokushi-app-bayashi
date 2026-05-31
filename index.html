@@ -6,6 +6,7 @@
     <title>がんばれバヤシ！国試一直線</title>
     <link rel="stylesheet" href="style.css">
     
+    <!-- 近未来風フォント -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -15,13 +16,15 @@
 </head>
 <body>
     <div class="app-container">
+        <!-- AI教師エリア（画像変更！） -->
         <div class="teacher-area">
-            <div class="teacher-icon">🤖</div>
+            <img src="kaniwo.png" alt="かにを先生" class="teacher-icon">
             <div class="balloon">
                 <p id="teacher-message">「システム起動... ミッションレベルを選択しろ！」</p>
             </div>
         </div>
 
+        <!-- スタート画面（モード選択） -->
         <div class="start-screen" id="start-screen">
             <h2 class="cyber-title">SELECT MISSION LEVEL</h2>
             
@@ -40,11 +43,13 @@
                 <div class="mode-time">EST. TIME: 約12分 / 限界突破のフル特訓</div>
             </button>
 
+            <!-- いつでも統計データを見られるボタン -->
             <button class="archive-btn" onclick="openStatsScreen()">
                 [ ARCHIVE ] 統計・ログデータを確認する
             </button>
         </div>
 
+        <!-- 問題出題ホログラムパネル -->
         <div class="quiz-card" id="quiz-contents" style="display: none;">
             <div class="q-progress">MISSION <span id="current-q-num">-</span> / <span id="total-q-num">-</span></div>
             <h2 class="question-text" id="question-text">Loading...</h2>
@@ -60,9 +65,11 @@
             </div>
         </div>
 
+        <!-- いつでも見られる統計・履歴画面 -->
         <div class="quiz-card" id="stats-screen" style="display: none;">
             <h2 class="cyber-title" style="text-align: center;">DATA CENTER</h2>
             
+            <!-- 週間・月間統計カード -->
             <div class="stats-summary-container">
                 <div class="stats-summary-card weekly">
                     <h4>WEEKLY (7日間)</h4>
@@ -80,6 +87,7 @@
                 </div>
             </div>
 
+            <!-- 履歴ログ一覧 -->
             <h3 style="color: #00f3ff; font-family: 'Orbitron'; font-size: 14px; margin-top: 25px; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 5px;">LOG HISTORY</h3>
             <div class="log-list" id="log-list">
                 <p style="color: #64748b; text-align: center; font-size: 13px;">ログデータを展開中...</p>
