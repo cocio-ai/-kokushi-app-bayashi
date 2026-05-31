@@ -18,7 +18,7 @@ body {
     max-width: 600px;
 }
 
-/* AI教師エリア */
+/* AI教師エリア（画像変更！） */
 .teacher-area {
     display: flex;
     align-items: center;
@@ -26,9 +26,14 @@ body {
 }
 
 .teacher-icon {
-    font-size: 45px;
+    width: 65px;
+    height: 65px;
     margin-right: 15px;
-    filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.8));
+    border-radius: 50%; /* まん丸にする */
+    border: 2px solid #00f3ff; /* ネオンの枠線 */
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.8); /* 外側に光を放つ */
+    object-fit: cover; /* 画像が歪まないように調整 */
+    background-color: #fff; /* 背景を白にしてイラストを目立たせる */
     animation: float 3s ease-in-out infinite;
 }
 
@@ -243,7 +248,7 @@ body {
 .charts-container { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
 .chart-wrapper { width: 100%; max-width: 400px; margin-inline: auto; }
 
-/* ★新設：週間・月間統計デザイン★ */
+/* 週間・月間統計デザイン */
 .stats-summary-container {
     display: flex;
     gap: 15px;
