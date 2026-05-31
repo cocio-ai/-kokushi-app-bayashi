@@ -38,7 +38,7 @@ const scripts = {
     ],
     finish100: "「[PERFECT] 驚異的な処理能力だ！お前の情熱がシステムを超えたぞ！」",
     finishGreat: "「[MISSION COMPLETE] 合格ボーダー突破！確実な進化を検知したぞ！」",
-    finishBad: "「[RETRY REQUIRED] まだポテンシャルを引き出しきれたいない！再起動だ！」"
+    finishBad: "「[RETRY REQUIRED] まだポテンシャルを引き出しきれていない！再起動だ！」"
 };
 
 const teacherMessage = document.getElementById("teacher-message");
@@ -224,7 +224,7 @@ async function saveAndShowFinalResult() {
         drawHistoryChart();
     } catch (error) {
         console.error("Firebaseへの保存に失敗しました", error);
-        teacherMessage.textContent = "起「[WARNING] サーバーとの同期に失敗した！」";
+        teacherMessage.textContent = "「[WARNING] サーバーとの同期に失敗した！」";
     }
 }
 
@@ -300,7 +300,6 @@ async function openStatsScreen() {
     teacherMessage.textContent = "「蓄積された戦闘データバンクを展開した。己の軌跡を確認しろ！」";
 
     try {
-        // 全ての過去ログを取得（最新の日時順）
         const snapshot = await db.collection("examResults").orderBy("timestamp", "desc").get();
         
         const now = new Date();
@@ -313,7 +312,7 @@ async function openStatsScreen() {
         let monthlyCorrectQuestions = 0;
 
         const logListContainer = document.getElementById("log-list");
-        logListContainer.innerHTML = ""; // 一旦クリア
+        logListContainer.innerHTML = ""; 
 
         if (snapshot.empty) {
             logListContainer.innerHTML = `<p style="color: #64748b; text-align: center; font-size: 13px;">まだ戦闘データが記録されていません。</p>`;
@@ -322,30 +321,26 @@ async function openStatsScreen() {
 
         snapshot.forEach(doc => {
             const data = doc.data();
-            if (!data.timestamp) return; // サーバー同期中のラグ回避
+            if (!data.timestamp) return; 
 
             const examDate = data.timestamp.toDate();
             const examTimeMs = examDate.getTime();
 
-            // 1. 週間統計（過去7日）の集計
             if (examTimeMs >= oneWeekAgo) {
                 weeklyTotalQuestions += data.total;
                 weeklyCorrectQuestions += data.score;
             }
 
-            // 2. 月間統計（過去30日）の集計
             if (examTimeMs >= oneMonthAgo) {
                 monthlyTotalQuestions += data.total;
                 monthlyCorrectQuestions += data.score;
             }
 
-            // 3. いつどのタイミングでやったかの日付フォーマット整形 (例: 05/31 14:30)
             const dateStr = String(examDate.getMonth() + 1).padStart(2, '0') + "/" + 
                             String(examDate.getDate()).padStart(2, '0') + " " + 
                             String(examDate.getHours()).padStart(2, '0') + ":" + 
                             String(examDate.getMinutes()).padStart(2, '0');
 
-            // 4. ログ一覧のHTML要素を生成
             const pctClass = data.percentage >= 70 ? "" : "low";
             const itemHtml = `
                 <div class="log-item">
@@ -357,7 +352,6 @@ async function openStatsScreen() {
             logListContainer.innerHTML += itemHtml;
         });
 
-        // 画面上の数値を熱く書き換え
         document.getElementById("weekly-count").innerHTML = `${weeklyTotalQuestions}<span>問</span>`;
         const weeklyRate = weeklyTotalQuestions > 0 ? Math.round((weeklyCorrectQuestions / weeklyTotalQuestions) * 100) : 0;
         document.getElementById("weekly-rate").innerHTML = `${weeklyRate}<span>%</span>`;
