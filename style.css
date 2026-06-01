@@ -20,8 +20,6 @@ body {
     align-items: center;
     margin-bottom: 25px;
 }
-
-/* ★かにお教官プロフ（画像＋名前）★ */
 .teacher-profile {
     display: flex;
     flex-direction: column;
@@ -78,7 +76,37 @@ body {
     background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(0, 243, 255, 0.3);
     border-radius: 8px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.1);
 }
-.cyber-title { font-family: 'Orbitron', sans-serif; color: #00f3ff; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); margin-bottom: 25px; }
+
+/* ★追加：メインタイトルと説明文のデザイン★ */
+.main-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+    letter-spacing: 2px;
+}
+.main-title .title-sub {
+    font-size: 32px;
+    color: #00f3ff;
+    text-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+}
+.app-description {
+    background: rgba(0, 243, 255, 0.05);
+    border-left: 4px solid #00f3ff;
+    padding: 12px 15px;
+    margin-bottom: 30px;
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: left;
+    line-height: 1.6;
+    border-radius: 0 4px 4px 0;
+}
+.app-description p { margin: 0; }
+
+.cyber-title { font-family: 'Orbitron', sans-serif; color: #00f3ff; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); margin-bottom: 25px; font-size: 20px; }
 .mode-btn {
     display: block; width: 100%; background-color: rgba(0, 243, 255, 0.05); border: 1px solid #38bdf8;
     border-radius: 4px; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s; text-align: left;
