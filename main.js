@@ -9,8 +9,8 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ★最強の直通URL★
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?output=csv";
+// ★【修正】「シート1だけを指定する魔法の言葉（gid=0&single=true）」を追加しました★
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?gid=0&single=true&output=csv";
 
 let quizData = [];
 let currentIndex = 0;
@@ -31,7 +31,7 @@ function getRandomVoice(type) {
 
 async function fetchQuizData() {
     try {
-        // ★修正ポイント：URLにすでに「?」が含まれているので、キャッシュ対策は「&」で繋ぐのが正解だ！！★
+        // キャッシュ対策は &t= で繋ぐ
         const response = await fetch(SHEET_CSV_URL + "&t=" + new Date().getTime());
         
         if (!response.ok) throw new Error("HTTPエラー: " + response.status);
