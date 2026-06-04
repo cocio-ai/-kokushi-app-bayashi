@@ -32,9 +32,25 @@
                 <p>過去のデータからランダムに出題される特訓システムだ。<br>スキマ時間を制する者が国試を制す！</p>
             </div>
             <h2 class="cyber-title">▶ SELECT MISSION LEVEL</h2>
-            <button class="mode-btn" onclick="startQuiz(10)"><div class="mode-title">QUICK HACK (10問)</div></button>
-            <button class="mode-btn" onclick="startQuiz(20)"><div class="mode-title">NEURAL DRIVE (20問)</div></button>
-            <button class="mode-btn" onclick="startQuiz(30)"><div class="mode-title">SYSTEM MASTER (30問)</div></button>
+            
+            <button class="mode-btn" onclick="startQuiz(10)">
+                <div class="mode-title">QUICK HACK (10問)</div>
+                <div class="mode-time">EST. TIME: 約3分</div>
+            </button>
+            <button class="mode-btn" onclick="startQuiz(20)">
+                <div class="mode-title">NEURAL DRIVE (20問)</div>
+                <div class="mode-time">EST. TIME: 約6分</div>
+            </button>
+            <button class="mode-btn" onclick="startQuiz(30)">
+                <div class="mode-title">SYSTEM MASTER (30問)</div>
+                <div class="mode-time">EST. TIME: 約10分</div>
+            </button>
+            
+            <button class="mode-btn final-mode" onclick="startQuiz(120)">
+                <div class="mode-title">REAL EXAM (本番モード: 120問)</div>
+                <div class="mode-time">EST. TIME: 約40分（※覚悟して挑め！）</div>
+            </button>
+
             <button class="archive-btn" onclick="openStatsScreen()">[ ARCHIVE ] 統計・ログデータを確認する</button>
         </div>
 
