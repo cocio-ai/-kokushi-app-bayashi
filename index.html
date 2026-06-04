@@ -27,15 +27,12 @@
             <h1 class="main-title">がんばれバヤシ！<br><span class="title-sub">国試一直線</span></h1>
             <div class="app-description">
                 <p>過去の国試データからランダムに出題される特訓システムだ！<br>
-                スキマ時間に合わせてミッションをこなし、己の成長を記録しろ。<br>
-                目指すは合格安全圏！気合を入れてレベルを選択しろ！</p>
+                スキマ時間に合わせてミッションをこなし、己の成長を記録しろ。</p>
             </div>
-
             <h2 class="cyber-title">SELECT MISSION LEVEL</h2>
             <button class="mode-btn" onclick="startQuiz(10)"><div class="mode-title">QUICK HACK (10問)</div></button>
             <button class="mode-btn" onclick="startQuiz(20)"><div class="mode-title">NEURAL DRIVE (20問)</div></button>
             <button class="mode-btn" onclick="startQuiz(30)"><div class="mode-title">SYSTEM MASTER (30問)</div></button>
-
             <button class="archive-btn" onclick="openStatsScreen()">[ ARCHIVE ] 統計・ログデータを確認する</button>
         </div>
 
@@ -51,11 +48,6 @@
 
         <div class="quiz-card" id="stats-screen" style="display: none;">
             <h2 class="cyber-title" style="text-align: center;">DATA CENTER</h2>
-            <div class="stats-summary-container">
-                <div class="stats-summary-card"><h4>WEEKLY</h4><div class="stats-val" id="weekly-count">0<span>問</span></div><div class="stats-val" id="weekly-rate">0<span>%</span></div></div>
-                <div class="stats-summary-card"><h4>MONTHLY</h4><div class="stats-val" id="monthly-count">0<span>問</span></div><div class="stats-val" id="monthly-rate">0<span>%</span></div></div>
-            </div>
-            <h3 style="color: #00f3ff; margin-top: 25px;">LOG HISTORY</h3>
             <div class="log-list" id="log-list"></div>
             <button class="next-btn" style="margin-top: 20px;" onclick="closeStatsScreen()">&lt;&lt; BACK TO MENU</button>
         </div>
