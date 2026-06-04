@@ -9,8 +9,9 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ★一切の細工を取り払った、純粋な公開URL★
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?output=csv";
+// ★「ウェブに公開」を完全に捨てた、最強の裏ルートURL★
+// バヤシさんが最初に設定してくれた「リンク共有」の権限だけを使って直接CSVを引っこ抜きます。
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv";
 
 let quizData = [];
 let currentIndex = 0;
@@ -30,7 +31,7 @@ function getRandomVoice(type) {
 }
 
 function fetchQuizData() {
-    // ★俺の通信コードを捨て、専用ツール（Papa Parse）に直接ダウンロードさせる最強の安全策★
+    // 通信処理はすべてプロフェッショナルなツール（Papa Parse）に一任します
     Papa.parse(SHEET_CSV_URL, {
         download: true,
         header: true, 
