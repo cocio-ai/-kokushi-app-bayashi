@@ -3,95 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>がんばれバヤシ！国試一直線</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>国試バヤシ 特訓システム</title>
+    
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <header class="app-header">
-            <h1 class="main-title">がんばれバヤシ！<br><span class="title-sub">国試一直線 - 限界突破編 -</span></h1>
-        </header>
-
-        <div class="teacher-area">
-            <div class="teacher-profile">
-                <img src="kaniwo.png" alt="かにお教官" class="teacher-icon">
-                <div class="teacher-name">かにお教官</div>
-            </div>
-            <div class="balloon">
-                <p id="teacher-message">「システム起動完了だ！今日も限界を突破するぞ、気合を入れろ！」</p>
-            </div>
+    <div id="app-container">
+        
+        <div id="teacher-message-box">
+            <p id="teacher-message">「よし！今日も限界を突破するぞ！特訓メニューを選べ！」</p>
         </div>
 
-        <div class="start-screen" id="start-screen">
-            <div class="app-description">
-                <p>過去のデータからランダムに出題される特訓システムだ。<br>スキマ時間を制する者が国試を制す！</p>
-            </div>
-            <h2 class="cyber-title">▶ SELECT MISSION LEVEL</h2>
+        <div id="start-screen">
+            <button class="menu-btn" onclick="startQuiz(10)">10問 特訓</button>
+            <button class="menu-btn" onclick="startQuiz(50)">50問 特訓</button>
+            <button class="menu-btn" onclick="startQuiz(120)">120問 本番モード</button>
+            <button class="menu-btn stats-btn" onclick="openStatsScreen()">過去の戦歴を見る</button>
+        </div>
+
+        <div id="quiz-contents" style="display: none;">
+            <h2 class="mission-title">MISSION <span id="current-q-num">0</span> / <span id="total-q-num">0</span></h2>
+            <p id="question-text">問題データへアクセス中...</p>
             
-            <button class="mode-btn" onclick="startQuiz(10)">
-                <div class="mode-title">QUICK HACK (10問)</div>
-                <div class="mode-desc">「カップ麺を待つ間に賢くなれ！スキマ時間をジャックする脳内ウォーミングアップだ！」</div>
-                <div class="mode-time">EST. TIME: 約3分</div>
-            </button>
+            <div id="options-area"></div>
             
-            <button class="mode-btn" onclick="startQuiz(20)">
-                <div class="mode-title">NEURAL DRIVE (20問)</div>
-                <div class="mode-desc">「思考回路をフル回転させろ！国試の頻出データを脳の深部へ直接インストールするぞ！」</div>
-                <div class="mode-time">EST. TIME: 約6分</div>
-            </button>
+            <div id="result-area" style="display: none;">
+                <h3>教官の解説</h3>
+                <p id="explanation"></p>
+            </div>
             
-            <button class="mode-btn" onclick="startQuiz(30)">
-                <div class="mode-title">SYSTEM MASTER (30問)</div>
-                <div class="mode-desc">「己の限界を突破せよ！あらゆる出題パターンを完全掌握するための高負荷トレーニング！」</div>
-                <div class="mode-time">EST. TIME: 約10分</div>
-            </button>
+            <button id="next-btn" style="display: none;">NEXT MISSION >></button>
+        </div>
+
+        <div id="final-screen" style="display: none;">
+            <h2>特訓完了！</h2>
+            <div id="final-score-display"></div>
+            <div id="comparison-box"></div>
             
-            <button class="mode-btn final-mode" onclick="startQuiz(120)">
-                <div class="mode-title">REAL EXAM (最終防衛線: 120問)</div>
-                <div class="mode-desc">「遊びはここまでだ！本番と全く同じ120問の地獄のノック！生半可な覚悟でこのボタンを押すなよ！！」</div>
-                <div class="mode-time">EST. TIME: 約40分〜（※途中離脱不可！）</div>
-            </button>
-
-            <button class="archive-btn" onclick="openStatsScreen()">[ ARCHIVE ] 統計・ログデータを確認する</button>
-        </div>
-
-        <div class="quiz-card" id="quiz-contents" style="display: none;">
-            <div class="q-progress">MISSION <span id="current-q-num">-</span> / <span id="total-q-num">-</span></div>
-            <h2 class="question-text" id="question-text">Loading...</h2>
-            <div class="options-container" id="options-area"></div>
-            <div class="result-container" id="result-area" style="display: none;">
-                <div class="explanation-box"><h3 class="exp-title">[ SYSTEM ANALYSIS : 教官の解説 ]</h3><p id="explanation"></p></div>
-                <button class="next-btn" id="next-btn">NEXT MISSION &gt;&gt;</button>
+            <div class="chart-container">
+                <canvas id="doughnutChart"></canvas>
             </div>
-        </div>
-
-        <div class="quiz-card" id="final-screen" style="display: none;">
-            <h2 class="cyber-title" style="text-align: center;">MISSION COMPLETE</h2>
-            <div id="final-score-display" class="final-score-display"></div>
-            <div id="comparison-box" class="comparison-box"></div>
-            <div class="charts-container">
-                <div class="chart-wrapper"><canvas id="doughnutChart"></canvas></div>
-                <div class="chart-wrapper" style="margin-top: 20px;"><canvas id="historyChart"></canvas></div>
-            </div>
-            <button class="next-btn" style="margin-top:20px;" onclick="location.reload()">&lt;&lt; トップに戻る</button>
-        </div>
-
-        <div class="quiz-card" id="stats-screen" style="display: none;">
-            <h2 class="cyber-title" style="text-align: center;">DATA CENTER</h2>
-            <div class="stats-summary-container">
-                <div class="stats-summary-card"><h4>WEEKLY</h4><div class="stats-val" id="weekly-count">0<span>問</span></div><div class="stats-val" id="weekly-rate">0<span>%</span></div></div>
-                <div class="stats-summary-card"><h4>MONTHLY</h4><div class="stats-val" id="monthly-count">0<span>問</span></div><div class="stats-val" id="monthly-rate">0<span>%</span></div></div>
-            </div>
-            <h3 style="color: #00f3ff; font-family: 'Orbitron'; font-size: 14px; margin-top: 25px; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 5px;">LOG HISTORY</h3>
-            <div class="log-list" id="log-list"></div>
-            <button class="next-btn" style="margin-top: 20px;" onclick="closeStatsScreen()">&lt;&lt; BACK TO MENU</button>
-        </div>
-    </div>
-    <script src="main.js"></script>
-</body>
-</html>
+            <div class="chart-container
