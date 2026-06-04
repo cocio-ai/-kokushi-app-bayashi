@@ -9,14 +9,13 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ★バヤシさんの最強スプレッドシートURL★
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/export?format=csv";
 
 let quizData = [];
 let currentIndex = 0;
 let score = 0;
 let questionLimit = 10;
-const PASSING_BORDER = 70; // 国試の合格ボーダーライン
+const PASSING_BORDER = 70; 
 
 const voiceLines = {
     encourage: [
@@ -24,19 +23,22 @@ const voiceLines = {
         "「疲れてきた時が本当の勝負だぞ！食らいつけ！」",
         "「バヤシならできる！自分の努力を信じろ！」",
         "「熱く、そして冷静にな！知識を引き出せ！」",
-        "「国試はメンタルゲーだ！絶対に折れるなよ！」"
+        "「国試はメンタルゲーだ！絶対に折れるなよ！」",
+        "「いい顔になってきたな！その集中力だ！」"
     ],
     correct: [
         "「大正解！その調子だバヤシ、お前の力は本物だ！」",
         "「ナイス判断だ！その知識が未来の患者を救うぞ！」",
         "「よっしゃあ！！教官も鼻が高いぞ！」",
-        "「完璧だ！迷いがない、最高の解答だ！」"
+        "「完璧だ！迷いがない、最高の解答だ！」",
+        "「素晴らしい！このペースでガンガンいこうぜ！」"
     ],
     wrong: [
         "「ドンマイ！今のミスは本番で間違えないための投資だ！」",
         "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」",
         "「悔しいか！？その悔しさが記憶を脳に焼き付けるんだ！」",
-        "「落ち着け！解説を声に出して読んで、完全にモノにしろ！」"
+        "「落ち着け！解説を声に出して読んで、完全にモノにしろ！」",
+        "「焦るなバヤシ！基礎に立ち返れば必ず見えてくる！」"
     ]
 };
 
@@ -45,42 +47,46 @@ function getRandomVoice(type) {
     return lines[Math.floor(Math.random() * lines.length)];
 }
 
-// 🔥 鉄壁のデータ読み込み関数 🔥
 async function fetchQuizData() {
     try {
         const response = await fetch(SHEET_CSV_URL + "?t=" + new Date().getTime());
+        if (!response.ok) throw new Error("HTTP Status: " + response.status);
         const data = await response.text();
-        
-        // 【防御壁1】Googleがエラー画面（HTML）を返してきたらクラッシュ前に止める！
+
         if (data.includes("<html") || data.includes("<!DOCTYPE")) {
-            document.getElementById("teacher-message").innerText = "「Google先生がアクセスを一時制限しているようだ！数分待ってからもう一度試してくれ！」";
+            document.getElementById("teacher-message").innerText = "「Google先生がアクセスをブロックしている！スプレッドシートの共有が『リンクを知っている全員』になっているか確認しろ！」";
             return;
         }
 
         Papa.parse(data, {
             header: true, 
             skipEmptyLines: true,
-            // 【防御壁2】見出しの不要な空白や見えない文字を強制クリーニング！
+            // 【鉄壁防御1】見出しのBOM（見えない文字）や空白を完全に削ぎ落とす！
             transformHeader: function(header) {
                 return header.replace(/^\uFEFF/, '').trim();
             },
             complete: (results) => {
-                let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
-                
-                // 【防御壁3】それでも0問判定になったらクラッシュさせずに警告を出す！
-                if (allData.length === 0) {
-                    document.getElementById("teacher-message").innerText = "「データが読み込めないぞ！スプレッドシートが正しく公開されているか確認しろ！」";
-                    return;
-                }
+                // 【鉄壁防御2】内部でのエラーもみ消しを防ぐため、さらにtry-catchで囲む！
+                try {
+                    let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
 
-                allData.sort(() => Math.random() - 0.5);
-                quizData = allData.slice(0, questionLimit);
-                document.getElementById("total-q-num").innerText = quizData.length;
-                showQuiz();
+                    if (allData.length === 0) {
+                        document.getElementById("teacher-message").innerText = "「問題データが0件だ！スプレッドシートの1行目が『問題文』『選択肢1』などの見出しになっているか確認しろ！」";
+                        return;
+                    }
+
+                    allData.sort(() => Math.random() - 0.5);
+                    quizData = allData.slice(0, questionLimit);
+                    document.getElementById("total-q-num").innerText = quizData.length;
+                    showQuiz();
+                } catch (err) {
+                    console.error("内部エラー:", err);
+                    document.getElementById("teacher-message").innerText = "「システム内部でエラーが発生したぞ！教官のミスだ、申し訳ない！」";
+                }
             }
         });
     } catch (e) { 
-        document.getElementById("teacher-message").innerText = "「通信エラーだ！ネットワークの接続状況を確認してくれ！」"; 
+        document.getElementById("teacher-message").innerText = "「通信エラーだ！電波のいいところでやり直してくれ！」"; 
     }
 }
 
@@ -92,6 +98,8 @@ function showQuiz() {
 
 function loadQuestion() {
     const q = quizData[currentIndex];
+    if (!q) return; // 安全対策
+
     document.getElementById("current-q-num").innerText = currentIndex + 1;
     document.getElementById("question-text").innerText = q["問題文"];
     
@@ -103,7 +111,7 @@ function loadQuestion() {
     area.innerHTML = "";
     
     [q["選択肢1"], q["選択肢2"], q["選択肢3"], q["選択肢4"]].forEach((text, i) => {
-        if (!text) return;
+        if (!text || text.trim() === "") return;
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.innerText = text;
@@ -117,13 +125,16 @@ function checkAnswer(i, btn) {
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(b => b.disabled = true);
     
-    if (i == q["正解番号"]) { 
-        btn.className += " correct"; 
+    // 正解番号を確実に数値に変換して比較
+    const correctIdx = parseInt(q["正解番号"], 10);
+    
+    if (i === correctIdx) { 
+        btn.classList.add("correct"); 
         score++; 
         document.getElementById("teacher-message").innerText = getRandomVoice("correct");
     } else { 
-        btn.className += " wrong"; 
-        buttons[q["正解番号"]].className += " correct";
+        btn.classList.add("wrong"); 
+        if (buttons[correctIdx]) buttons[correctIdx].classList.add("correct");
         document.getElementById("teacher-message").innerText = getRandomVoice("wrong");
     }
     
