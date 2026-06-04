@@ -9,8 +9,8 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ★【修正】「シート1だけを指定する魔法の言葉（gid=0&single=true）」を追加しました★
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?gid=0&single=true&output=csv";
+// ★一切の細工を取り払った、純粋な公開URL★
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?output=csv";
 
 let quizData = [];
 let currentIndex = 0;
@@ -29,44 +29,34 @@ function getRandomVoice(type) {
     return lines[Math.floor(Math.random() * lines.length)];
 }
 
-async function fetchQuizData() {
-    try {
-        // キャッシュ対策は &t= で繋ぐ
-        const response = await fetch(SHEET_CSV_URL + "&t=" + new Date().getTime());
-        
-        if (!response.ok) throw new Error("HTTPエラー: " + response.status);
-        const data = await response.text();
-
-        if (data.includes("<html") || data.includes("<!DOCTYPE")) {
-            document.getElementById("teacher-message").innerText = "「Google先生のHTML画面が返ってきたぞ！URLか公開設定のミスだ！」";
-            return;
-        }
-
-        Papa.parse(data, {
-            header: true, 
-            skipEmptyLines: true,
-            transformHeader: function(header) {
-                return header.replace(/^\uFEFF/, '').trim();
-            },
-            complete: (results) => {
-                try {
-                    let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
-                    if (allData.length === 0) {
-                        document.getElementById("teacher-message").innerText = "「問題データが0件だ！スプレッドシートの1行目が見出しになっているか確認しろ！」";
-                        return;
-                    }
-                    allData.sort(() => Math.random() - 0.5);
-                    quizData = allData.slice(0, questionLimit);
-                    document.getElementById("total-q-num").innerText = quizData.length;
-                    showQuiz();
-                } catch (err) {
-                    document.getElementById("teacher-message").innerText = "「システム内部エラーだ！詳細: " + err.message + "」";
+function fetchQuizData() {
+    // ★俺の通信コードを捨て、専用ツール（Papa Parse）に直接ダウンロードさせる最強の安全策★
+    Papa.parse(SHEET_CSV_URL, {
+        download: true,
+        header: true, 
+        skipEmptyLines: true,
+        transformHeader: function(header) {
+            return header.replace(/^\uFEFF/, '').trim();
+        },
+        complete: (results) => {
+            try {
+                let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
+                if (allData.length === 0) {
+                    document.getElementById("teacher-message").innerText = "「データが空だ！スプレッドシートの1行目が見出しになっているか確認してくれ！」";
+                    return;
                 }
+                allData.sort(() => Math.random() - 0.5);
+                quizData = allData.slice(0, questionLimit);
+                document.getElementById("total-q-num").innerText = quizData.length;
+                showQuiz();
+            } catch (err) {
+                document.getElementById("teacher-message").innerText = "「システム内部エラーだ！詳細: " + err.message + "」";
             }
-        });
-    } catch (e) { 
-        document.getElementById("teacher-message").innerText = "「通信失敗だ！原因：【" + e.message + "】」"; 
-    }
+        },
+        error: (err) => {
+            document.getElementById("teacher-message").innerText = "「通信失敗だ！原因：【" + err.message + "】」";
+        }
+    });
 }
 
 function showQuiz() {
@@ -129,7 +119,12 @@ document.getElementById("next-btn").onclick = () => {
 
 function startQuiz(limit) { 
     questionLimit = limit; currentIndex = 0; score = 0;
-    document.getElementById("teacher-message").innerText = "「データアクセス中... 待機しろ！」";
+    if(limit === 120) {
+        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、お前の限界を見せてみろ！！絶対に集中を切らすな！！」";
+    } else {
+        document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
+    }
+    document.getElementById("teacher-message").innerText += "\n(データアクセス中... 待機しろ！)";
     fetchQuizData(); 
 }
 
