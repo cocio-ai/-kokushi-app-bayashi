@@ -19,8 +19,16 @@ body { font-family: 'Noto Sans JP', sans-serif; background-color: #050914; backg
 .cyber-title { font-family: 'Orbitron', sans-serif; color: #00f3ff; font-size: 18px; margin-bottom: 20px; text-align: center; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 10px;}
 
 /* ボタン類 */
-.mode-btn { display: block; width: 100%; background: linear-gradient(90deg, rgba(0, 243, 255, 0.1) 0%, rgba(0, 0, 0, 0) 100%); border: 1px solid #38bdf8; border-left: 5px solid #00f3ff; border-radius: 6px; padding: 18px; margin-bottom: 15px; color: #ffffff; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; font-size: 18px; font-weight: bold; cursor: pointer; text-align: left; transition: all 0.2s ease; }
+.mode-btn { display: block; width: 100%; background: linear-gradient(90deg, rgba(0, 243, 255, 0.1) 0%, rgba(0, 0, 0, 0) 100%); border: 1px solid #38bdf8; border-left: 5px solid #00f3ff; border-radius: 6px; padding: 18px; margin-bottom: 15px; color: #ffffff; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; cursor: pointer; text-align: left; transition: all 0.2s ease; }
+.mode-title { font-size: 18px; font-weight: bold; }
+.mode-time { font-size: 13px; color: #94a3b8; font-family: 'Noto Sans JP', sans-serif; font-weight: normal; margin-top: 5px; }
 .mode-btn:hover { background: rgba(0, 243, 255, 0.2); transform: scale(1.02); box-shadow: 0 0 15px rgba(0,243,255,0.4); }
+
+/* 🔥 本番モード専用デザイン 🔥 */
+.mode-btn.final-mode { border-left: 5px solid #ff0055; background: linear-gradient(90deg, rgba(255, 0, 85, 0.15) 0%, rgba(0, 0, 0, 0) 100%); border-color: #ff0055; }
+.mode-btn.final-mode:hover { background: rgba(255, 0, 85, 0.25); box-shadow: 0 0 15px rgba(255,0,85,0.4); border-color: #ff3377; }
+.mode-btn.final-mode .mode-time { color: #ff80a6; }
+
 .archive-btn { display: block; width: 100%; background: transparent; border: 1px dashed #94a3b8; color: #94a3b8; padding: 15px; border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.2s; margin-top: 10px;}
 .archive-btn:hover { border-color: #00f3ff; color: #00f3ff; }
 
