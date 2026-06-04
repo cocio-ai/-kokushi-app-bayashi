@@ -9,7 +9,8 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/export?format=csv";
+// ★お前が勝ち取った最強の直通URLだ！！★
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?output=csv";
 
 let quizData = [];
 let currentIndex = 0;
@@ -54,24 +55,22 @@ async function fetchQuizData() {
         const data = await response.text();
 
         if (data.includes("<html") || data.includes("<!DOCTYPE")) {
-            document.getElementById("teacher-message").innerText = "「Google先生がアクセスをブロックしている！スプレッドシートの共有が『リンクを知っている全員』になっているか確認しろ！」";
+            document.getElementById("teacher-message").innerText = "「エラーだ！Googleの壁に弾かれたぞ！URLを確認してくれ！」";
             return;
         }
 
         Papa.parse(data, {
             header: true, 
             skipEmptyLines: true,
-            // 【鉄壁防御1】見出しのBOM（見えない文字）や空白を完全に削ぎ落とす！
             transformHeader: function(header) {
                 return header.replace(/^\uFEFF/, '').trim();
             },
             complete: (results) => {
-                // 【鉄壁防御2】内部でのエラーもみ消しを防ぐため、さらにtry-catchで囲む！
                 try {
                     let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
 
                     if (allData.length === 0) {
-                        document.getElementById("teacher-message").innerText = "「問題データが0件だ！スプレッドシートの1行目が『問題文』『選択肢1』などの見出しになっているか確認しろ！」";
+                        document.getElementById("teacher-message").innerText = "「問題データが0件だ！スプレッドシートの1行目が見出しになっているか確認しろ！」";
                         return;
                     }
 
@@ -98,7 +97,7 @@ function showQuiz() {
 
 function loadQuestion() {
     const q = quizData[currentIndex];
-    if (!q) return; // 安全対策
+    if (!q) return; 
 
     document.getElementById("current-q-num").innerText = currentIndex + 1;
     document.getElementById("question-text").innerText = q["問題文"];
@@ -125,7 +124,6 @@ function checkAnswer(i, btn) {
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(b => b.disabled = true);
     
-    // 正解番号を確実に数値に変換して比較
     const correctIdx = parseInt(q["正解番号"], 10);
     
     if (i === correctIdx) { 
