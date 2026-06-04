@@ -9,7 +9,7 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ★最強の直通URL（小文字のhttpsに修正済み）★
+// ★最強の直通URL★
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6wPUUpF-pqQG8SN0XRcR9p255oUNm768eSvPIdsAOXz_02x3q2ll1xJnAI2kJtOQMomJG7_Msm9Wx/pub?output=csv";
 
 let quizData = [];
@@ -31,7 +31,9 @@ function getRandomVoice(type) {
 
 async function fetchQuizData() {
     try {
-        const response = await fetch(SHEET_CSV_URL + "?t=" + new Date().getTime());
+        // ★修正ポイント：URLにすでに「?」が含まれているので、キャッシュ対策は「&」で繋ぐのが正解だ！！★
+        const response = await fetch(SHEET_CSV_URL + "&t=" + new Date().getTime());
+        
         if (!response.ok) throw new Error("HTTPエラー: " + response.status);
         const data = await response.text();
 
@@ -63,7 +65,6 @@ async function fetchQuizData() {
             }
         });
     } catch (e) { 
-        // ★エラーの本当の原因を画面に直接表示する最強のデバッグ機能★
         document.getElementById("teacher-message").innerText = "「通信失敗だ！原因：【" + e.message + "】」"; 
     }
 }
