@@ -9,8 +9,7 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ★「ウェブに公開」を完全に捨てた、最強の裏ルートURL★
-// バヤシさんが最初に設定してくれた「リンク共有」の権限だけを使って直接CSVを引っこ抜きます。
+// 公式のCSV出力URL（ウェブ公開機能のバグに依存しない裏ルートです）
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv";
 
 let quizData = [];
@@ -20,7 +19,7 @@ let questionLimit = 10;
 const PASSING_BORDER = 70; 
 
 const voiceLines = {
-    encourage: ["「さあ、次の問題だ！気合を入れ直せ！」", "「疲れてきた時が本当の勝負だぞ！食らいつけ！」", "「バヤシならできる！自分の努力を信じろ！」", "「熱く、そして冷静にな！知識を引き出せ！」"],
+    encourage: ["「さあ、次の問題だ！気合を入れ直せ！」", "「疲れてきた時が本当の勝負だぞ！食らいつけ！」", "「バヤシならできる！自分の努力を信じろ！」"],
     correct: ["「大正解！その調子だバヤシ、お前の力は本物だ！」", "「ナイス判断だ！その知識が未来の患者を救うぞ！」", "「よっしゃあ！！教官も鼻が高いぞ！」"],
     wrong: ["「ドンマイ！今のミスは本番で間違えないための投資だ！」", "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」", "「落ち着け！解説を声に出して読んで、完全にモノにしろ！」"]
 };
@@ -31,7 +30,6 @@ function getRandomVoice(type) {
 }
 
 function fetchQuizData() {
-    // 通信処理はすべてプロフェッショナルなツール（Papa Parse）に一任します
     Papa.parse(SHEET_CSV_URL, {
         download: true,
         header: true, 
@@ -40,22 +38,19 @@ function fetchQuizData() {
             return header.replace(/^\uFEFF/, '').trim();
         },
         complete: (results) => {
-            try {
-                let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
-                if (allData.length === 0) {
-                    document.getElementById("teacher-message").innerText = "「データが空だ！スプレッドシートの1行目が見出しになっているか確認してくれ！」";
-                    return;
-                }
-                allData.sort(() => Math.random() - 0.5);
-                quizData = allData.slice(0, questionLimit);
-                document.getElementById("total-q-num").innerText = quizData.length;
-                showQuiz();
-            } catch (err) {
-                document.getElementById("teacher-message").innerText = "「システム内部エラーだ！詳細: " + err.message + "」";
+            let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
+            if (allData.length === 0) {
+                document.getElementById("teacher-message").innerText = "「データが空だ！スプレッドシートの1行目が見出しになっているか確認してくれ！」";
+                return;
             }
+            allData.sort(() => Math.random() - 0.5);
+            quizData = allData.slice(0, questionLimit);
+            document.getElementById("total-q-num").innerText = quizData.length;
+            showQuiz();
         },
         error: (err) => {
-            document.getElementById("teacher-message").innerText = "「通信失敗だ！原因：【" + err.message + "】」";
+            // ★もし新しいコードが動いてエラーになった場合は、必ず「PapaParseエラーだ！」という文字が出ます。
+            document.getElementById("teacher-message").innerText = "「PapaParseエラーだ！原因：【" + err.message + "】」";
         }
     });
 }
@@ -120,12 +115,7 @@ document.getElementById("next-btn").onclick = () => {
 
 function startQuiz(limit) { 
     questionLimit = limit; currentIndex = 0; score = 0;
-    if(limit === 120) {
-        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、お前の限界を見せてみろ！！絶対に集中を切らすな！！」";
-    } else {
-        document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
-    }
-    document.getElementById("teacher-message").innerText += "\n(データアクセス中... 待機しろ！)";
+    document.getElementById("teacher-message").innerText = "「データアクセス中... 待機しろ！」";
     fetchQuizData(); 
 }
 
