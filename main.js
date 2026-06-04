@@ -49,7 +49,6 @@ function getRandomVoice(type) {
 
 async function fetchQuizData() {
     try {
-        document.getElementById("teacher-message").innerText = "「データベースにアクセス中だ！通信完了まで待機しろ！」";
         const response = await fetch(SHEET_CSV_URL + "?t=" + new Date().getTime());
         const data = await response.text();
         Papa.parse(data, {
@@ -58,6 +57,8 @@ async function fetchQuizData() {
             complete: (results) => {
                 let allData = results.data.filter(row => row["問題文"]).sort(() => Math.random() - 0.5);
                 quizData = allData.slice(0, questionLimit);
+                
+                // 万が一スプレッドシートの問題数が選んだモードより少ない場合の表示対応
                 document.getElementById("total-q-num").innerText = quizData.length;
                 showQuiz();
             }
@@ -136,11 +137,18 @@ function startQuiz(limit) {
     questionLimit = limit;
     currentIndex = 0;
     score = 0;
-    document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
+    
+    // 🔥 本番モード専用のセリフ分岐 🔥
+    if(limit === 120) {
+        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、お前の限界を見せてみろ！！絶対に集中を切らすな！！」";
+    } else {
+        document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
+    }
+    
+    document.getElementById("teacher-message").innerText += "\n(データ読み込み中...)";
     fetchQuizData(); 
 }
 
-// 🔥 復活：Firebaseへの保存とグラフ描画処理 🔥
 async function saveAndShowFinalResult() {
     document.getElementById("quiz-contents").style.display = "none";
     document.getElementById("final-screen").style.display = "block";
@@ -162,11 +170,9 @@ async function saveAndShowFinalResult() {
         : `<p class="warning-text">WARNING! 国試合格ボーダー(${PASSING_BORDER}%)まで あと ${PASSING_BORDER - passRate}%！</p>`;
     document.getElementById("comparison-box").innerHTML = compHtml;
 
-    // ドーナツグラフ描画
     drawDoughnutChart(score, quizData.length - score);
 
     try {
-        // 結果をFirebaseに保存
         await db.collection("examResults").add({
             score: score,
             total: quizData.length,
@@ -174,7 +180,6 @@ async function saveAndShowFinalResult() {
             mode: questionLimit,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-        // 過去の推移グラフを描画
         drawHistoryChart();
     } catch (error) {
         console.error("Firebase保存エラー:", error);
@@ -208,7 +213,7 @@ async function drawHistoryChart() {
     const snapshot = await db.collection("examResults").orderBy("timestamp", "asc").limit(15).get();
     const labels = [];
     const dataPoints = [];
-    const borderPoints = []; // 70%のボーダーライン用データ
+    const borderPoints = []; 
     let attempt = 1;
 
     snapshot.forEach(doc => {
@@ -239,7 +244,7 @@ async function drawHistoryChart() {
                     data: borderPoints,
                     borderColor: '#ff0055',
                     borderWidth: 2,
-                    borderDash: [5, 5], // 点線で表示
+                    borderDash: [5, 5], 
                     pointRadius: 0,
                     fill: false
                 }
@@ -255,7 +260,6 @@ async function drawHistoryChart() {
     });
 }
 
-// アーカイブ画面の復活
 async function openStatsScreen() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("stats-screen").style.display = "block";
@@ -291,7 +295,7 @@ async function openStatsScreen() {
             logListContainer.innerHTML += `
                 <div class="log-item">
                     <span>${dateStr}</span>
-                    <span>${data.mode}問モード (${data.score}/${data.total})</span>
+                    <span>${data.mode}問 (${data.score}/${data.total})</span>
                     <span class="log-pct ${pctClass}">${data.percentage}%</span>
                 </div>
             `;
