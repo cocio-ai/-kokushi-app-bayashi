@@ -1,4 +1,3 @@
-// Firebase設定（そのまま）
 const firebaseConfig = { 
     apiKey: "AIzaSyAP4WmzOpwjst-KTgJtD99r12Azdw1n_D8", 
     authDomain: "kokushi-bayashi.firebaseapp.com", 
@@ -10,15 +9,14 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 連携URL（変更なし）
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/export?format=csv";
 
 let quizData = [];
 let currentIndex = 0;
 let score = 0;
 let questionLimit = 10;
+const PASSING_BORDER = 70; // 国試の合格ボーダーライン
 
-// 🔥 熱血教官セリフ集（大幅増量！）
 const voiceLines = {
     encourage: [
         "「さあ、次の問題だ！気合を入れ直せ！」",
@@ -44,7 +42,6 @@ const voiceLines = {
     ]
 };
 
-// ランダムにセリフを選ぶ関数
 function getRandomVoice(type) {
     const lines = voiceLines[type];
     return lines[Math.floor(Math.random() * lines.length)];
@@ -81,7 +78,6 @@ function loadQuestion() {
     document.getElementById("current-q-num").innerText = currentIndex + 1;
     document.getElementById("question-text").innerText = q["問題文"];
     
-    // 次の問題に進んだ時は「励ましボイス」
     if (currentIndex > 0) {
         document.getElementById("teacher-message").innerText = getRandomVoice("encourage");
     }
@@ -90,7 +86,7 @@ function loadQuestion() {
     area.innerHTML = "";
     
     [q["選択肢1"], q["選択肢2"], q["選択肢3"], q["選択肢4"]].forEach((text, i) => {
-        if (!text) return; // 空の選択肢はスキップ
+        if (!text) return;
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.innerText = text;
@@ -102,7 +98,7 @@ function loadQuestion() {
 function checkAnswer(i, btn) {
     const q = quizData[currentIndex];
     const buttons = document.querySelectorAll(".option-btn");
-    buttons.forEach(b => b.disabled = true); // 連打防止
+    buttons.forEach(b => b.disabled = true);
     
     if (i == q["正解番号"]) { 
         btn.className += " correct"; 
@@ -110,17 +106,18 @@ function checkAnswer(i, btn) {
         document.getElementById("teacher-message").innerText = getRandomVoice("correct");
     } else { 
         btn.className += " wrong"; 
-        buttons[q["正解番号"]].className += " correct"; // 正解を光らせる
+        buttons[q["正解番号"]].className += " correct";
         document.getElementById("teacher-message").innerText = getRandomVoice("wrong");
     }
     
-    // スプレッドシートの解説を表示（改行コードを<br>に変換）
     let expText = q["解説"] ? q["解説"].replace(/<br>/g, '\n') : "解説データなし";
     document.getElementById("explanation").innerText = expText;
     document.getElementById("result-area").style.display = "block";
     
     if (currentIndex === quizData.length - 1) {
-        document.getElementById("next-btn").innerText = "MISSION CLEAR! 結果を見る >>";
+        document.getElementById("next-btn").innerText = "MISSION CLEAR! 結果とグラフを見る >>";
+    } else {
+        document.getElementById("next-btn").innerText = "NEXT MISSION >>";
     }
 }
 
@@ -129,16 +126,9 @@ document.getElementById("next-btn").onclick = () => {
     if (currentIndex < quizData.length) { 
         document.getElementById("result-area").style.display = "none";
         loadQuestion(); 
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // 上までスクロール
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } else { 
-        const passRate = Math.round((score / quizData.length) * 100);
-        let finalMessage = "";
-        if(passRate === 100) finalMessage = "「完璧だ！お前の情熱の証だ！🔥」";
-        else if(passRate >= 70) finalMessage = "「よくやった！合格ボーダー突破だ！」";
-        else finalMessage = "「どうした！お前の力はこんなもんじゃない！もう1回だ！」";
-        
-        alert(`特訓終了だ！\nスコア: ${score} / ${quizData.length} (正答率: ${passRate}%)\n\n教官：${finalMessage}`); 
-        location.reload(); 
+        saveAndShowFinalResult();
     }
 };
 
@@ -148,4 +138,177 @@ function startQuiz(limit) {
     score = 0;
     document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
     fetchQuizData(); 
+}
+
+// 🔥 復活：Firebaseへの保存とグラフ描画処理 🔥
+async function saveAndShowFinalResult() {
+    document.getElementById("quiz-contents").style.display = "none";
+    document.getElementById("final-screen").style.display = "block";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const passRate = Math.round((score / quizData.length) * 100);
+    
+    let finalMessage = "";
+    if(passRate === 100) finalMessage = "「完璧だ！お前の情熱の証だ！🔥」";
+    else if(passRate >= PASSING_BORDER) finalMessage = "「よくやった！合格ボーダー突破だ！」";
+    else finalMessage = "「どうした！お前の力はこんなもんじゃない！もう1回だ！」";
+    document.getElementById("teacher-message").innerText = finalMessage;
+
+    document.getElementById("final-score-display").innerText = `${passRate}%`;
+    document.getElementById("final-score-display").style.color = passRate >= PASSING_BORDER ? "#00ff80" : "#ff0055";
+
+    let compHtml = passRate >= PASSING_BORDER
+        ? `<p class="clear-text">TARGET CLEAR! 国試合格ボーダー(${PASSING_BORDER}%) 到達！</p>`
+        : `<p class="warning-text">WARNING! 国試合格ボーダー(${PASSING_BORDER}%)まで あと ${PASSING_BORDER - passRate}%！</p>`;
+    document.getElementById("comparison-box").innerHTML = compHtml;
+
+    // ドーナツグラフ描画
+    drawDoughnutChart(score, quizData.length - score);
+
+    try {
+        // 結果をFirebaseに保存
+        await db.collection("examResults").add({
+            score: score,
+            total: quizData.length,
+            percentage: passRate,
+            mode: questionLimit,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        // 過去の推移グラフを描画
+        drawHistoryChart();
+    } catch (error) {
+        console.error("Firebase保存エラー:", error);
+        document.getElementById("teacher-message").innerText = "「通信エラーで記録できなかったが、お前の努力は本物だ！」";
+    }
+}
+
+let donutChartInstance = null;
+let lineChartInstance = null;
+
+function drawDoughnutChart(correctCount, wrongCount) {
+    if(donutChartInstance) donutChartInstance.destroy();
+    const ctx = document.getElementById('doughnutChart').getContext('2d');
+    donutChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['正解', '不正解'],
+            datasets: [{
+                data: [correctCount, wrongCount],
+                backgroundColor: ['rgba(0, 255, 128, 0.8)', 'rgba(255, 0, 85, 0.5)'],
+                borderColor: ['#00ff80', '#ff0055'],
+                borderWidth: 2
+            }]
+        },
+        options: { cutout: '65%', plugins: { legend: { labels: { color: '#e2e8f0' } }, title: { display: true, text: '今回の正答比率', color: '#00f3ff' } } }
+    });
+}
+
+async function drawHistoryChart() {
+    if(lineChartInstance) lineChartInstance.destroy();
+    const snapshot = await db.collection("examResults").orderBy("timestamp", "asc").limit(15).get();
+    const labels = [];
+    const dataPoints = [];
+    const borderPoints = []; // 70%のボーダーライン用データ
+    let attempt = 1;
+
+    snapshot.forEach(doc => {
+        labels.push("T-" + attempt);
+        dataPoints.push(doc.data().percentage);
+        borderPoints.push(PASSING_BORDER);
+        attempt++;
+    });
+
+    const ctx = document.getElementById('historyChart').getContext('2d');
+    lineChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'バヤシの正答率 (%)',
+                    data: dataPoints,
+                    borderColor: '#00f3ff',
+                    backgroundColor: 'rgba(0, 243, 255, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#00f3ff',
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: '国試合格ボーダー (70%)',
+                    data: borderPoints,
+                    borderColor: '#ff0055',
+                    borderWidth: 2,
+                    borderDash: [5, 5], // 点線で表示
+                    pointRadius: 0,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            plugins: { legend: { labels: { color: '#e2e8f0' } }, title: { display: true, text: '過去15回の成長と合格ライン比較', color: '#00f3ff' } },
+            scales: {
+                x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+            }
+        }
+    });
+}
+
+// アーカイブ画面の復活
+async function openStatsScreen() {
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("stats-screen").style.display = "block";
+    document.getElementById("teacher-message").innerText = "「お前の過去の戦歴だ！データは嘘をつかないぞ！」";
+    
+    try {
+        const snapshot = await db.collection("examResults").orderBy("timestamp", "desc").get();
+        const now = new Date();
+        const oneWeekAgo = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+        const oneMonthAgo = now.getTime() - (30 * 24 * 60 * 60 * 1000);
+        
+        let wTotal = 0, wCorrect = 0, mTotal = 0, mCorrect = 0;
+        const logListContainer = document.getElementById("log-list");
+        logListContainer.innerHTML = ""; 
+
+        if (snapshot.empty) {
+            logListContainer.innerHTML = `<p style="text-align: center;">まだ戦歴がないぞ！特訓開始だ！</p>`;
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (!data.timestamp) return; 
+            const examTimeMs = data.timestamp.toDate().getTime();
+
+            if (examTimeMs >= oneWeekAgo) { wTotal += data.total; wCorrect += data.score; }
+            if (examTimeMs >= oneMonthAgo) { mTotal += data.total; mCorrect += data.score; }
+
+            const d = data.timestamp.toDate();
+            const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            const pctClass = data.percentage >= PASSING_BORDER ? "" : "low";
+            
+            logListContainer.innerHTML += `
+                <div class="log-item">
+                    <span>${dateStr}</span>
+                    <span>${data.mode}問モード (${data.score}/${data.total})</span>
+                    <span class="log-pct ${pctClass}">${data.percentage}%</span>
+                </div>
+            `;
+        });
+
+        document.getElementById("weekly-count").innerHTML = `${wTotal}<span>問</span>`;
+        document.getElementById("weekly-rate").innerHTML = `${wTotal > 0 ? Math.round((wCorrect / wTotal) * 100) : 0}<span>%</span>`;
+        document.getElementById("monthly-count").innerHTML = `${mTotal}<span>問</span>`;
+        document.getElementById("monthly-rate").innerHTML = `${mTotal > 0 ? Math.round((mCorrect / mTotal) * 100) : 0}<span>%</span>`;
+
+    } catch (error) {
+        document.getElementById("log-list").innerHTML = `<p style="color:#ff0055; text-align:center;">データ取得エラーだ！</p>`;
+    }
+}
+
+function closeStatsScreen() { 
+    document.getElementById("stats-screen").style.display = "none"; 
+    document.getElementById("start-screen").style.display = "block"; 
+    document.getElementById("teacher-message").innerText = "「よし！今日も限界を突破するぞ！特訓メニューを選べ！」";
 }
