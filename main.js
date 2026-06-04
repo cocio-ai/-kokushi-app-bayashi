@@ -9,6 +9,7 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// ★バヤシさんの最強スプレッドシートURL★
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/export?format=csv";
 
 let quizData = [];
@@ -23,22 +24,19 @@ const voiceLines = {
         "「疲れてきた時が本当の勝負だぞ！食らいつけ！」",
         "「バヤシならできる！自分の努力を信じろ！」",
         "「熱く、そして冷静にな！知識を引き出せ！」",
-        "「国試はメンタルゲーだ！絶対に折れるなよ！」",
-        "「いい顔になってきたな！その集中力だ！」"
+        "「国試はメンタルゲーだ！絶対に折れるなよ！」"
     ],
     correct: [
         "「大正解！その調子だバヤシ、お前の力は本物だ！」",
         "「ナイス判断だ！その知識が未来の患者を救うぞ！」",
         "「よっしゃあ！！教官も鼻が高いぞ！」",
-        "「完璧だ！迷いがない、最高の解答だ！」",
-        "「素晴らしい！このペースでガンガンいこうぜ！」"
+        "「完璧だ！迷いがない、最高の解答だ！」"
     ],
     wrong: [
         "「ドンマイ！今のミスは本番で間違えないための投資だ！」",
         "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」",
         "「悔しいか！？その悔しさが記憶を脳に焼き付けるんだ！」",
-        "「落ち着け！解説を声に出して読んで、完全にモノにしろ！」",
-        "「焦るなバヤシ！基礎に立ち返れば必ず見えてくる！」"
+        "「落ち着け！解説を声に出して読んで、完全にモノにしろ！」"
     ]
 };
 
@@ -47,24 +45,42 @@ function getRandomVoice(type) {
     return lines[Math.floor(Math.random() * lines.length)];
 }
 
+// 🔥 鉄壁のデータ読み込み関数 🔥
 async function fetchQuizData() {
     try {
         const response = await fetch(SHEET_CSV_URL + "?t=" + new Date().getTime());
         const data = await response.text();
+        
+        // 【防御壁1】Googleがエラー画面（HTML）を返してきたらクラッシュ前に止める！
+        if (data.includes("<html") || data.includes("<!DOCTYPE")) {
+            document.getElementById("teacher-message").innerText = "「Google先生がアクセスを一時制限しているようだ！数分待ってからもう一度試してくれ！」";
+            return;
+        }
+
         Papa.parse(data, {
             header: true, 
             skipEmptyLines: true,
+            // 【防御壁2】見出しの不要な空白や見えない文字を強制クリーニング！
+            transformHeader: function(header) {
+                return header.replace(/^\uFEFF/, '').trim();
+            },
             complete: (results) => {
-                let allData = results.data.filter(row => row["問題文"]).sort(() => Math.random() - 0.5);
-                quizData = allData.slice(0, questionLimit);
+                let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
                 
-                // 万が一スプレッドシートの問題数が選んだモードより少ない場合の表示対応
+                // 【防御壁3】それでも0問判定になったらクラッシュさせずに警告を出す！
+                if (allData.length === 0) {
+                    document.getElementById("teacher-message").innerText = "「データが読み込めないぞ！スプレッドシートが正しく公開されているか確認しろ！」";
+                    return;
+                }
+
+                allData.sort(() => Math.random() - 0.5);
+                quizData = allData.slice(0, questionLimit);
                 document.getElementById("total-q-num").innerText = quizData.length;
                 showQuiz();
             }
         });
     } catch (e) { 
-        document.getElementById("teacher-message").innerText = "「通信エラーだ！スプレッドシートの公開設定を見直してくれ！」"; 
+        document.getElementById("teacher-message").innerText = "「通信エラーだ！ネットワークの接続状況を確認してくれ！」"; 
     }
 }
 
@@ -138,14 +154,13 @@ function startQuiz(limit) {
     currentIndex = 0;
     score = 0;
     
-    // 🔥 本番モード専用のセリフ分岐 🔥
     if(limit === 120) {
         document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、お前の限界を見せてみろ！！絶対に集中を切らすな！！」";
     } else {
         document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
     }
     
-    document.getElementById("teacher-message").innerText += "\n(データ読み込み中...)";
+    document.getElementById("teacher-message").innerText += "\n(データアクセス中... 待機しろ！)";
     fetchQuizData(); 
 }
 
