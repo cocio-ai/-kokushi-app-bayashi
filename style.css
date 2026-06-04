@@ -13,3 +13,4 @@ body { font-family: 'Noto Sans JP', sans-serif; background-color: #050914; color
 .option-btn.correct { border-color: #00ff80; color: #00ff80; }
 .option-btn.wrong { border-color: #ff0055; color: #ff0055; }
 .next-btn { background: transparent; color: #00f3ff; border: 1px solid #00f3ff; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; }
+.log-list { max-height: 400px; overflow-y: auto; color: #94a3b8; font-size: 13px; }
