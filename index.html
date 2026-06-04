@@ -9,10 +9,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="app-container">
-        
         <header class="app-header">
             <h1 class="main-title">がんばれバヤシ！<br><span class="title-sub">国試一直線 - 限界突破編 -</span></h1>
         </header>
@@ -29,29 +29,46 @@
 
         <div class="start-screen" id="start-screen">
             <div class="app-description">
-                <p>過去のデータからランダムに出題される特訓システムだ。<br>
-                スキマ時間を制する者が国試を制す！</p>
+                <p>過去のデータからランダムに出題される特訓システムだ。<br>スキマ時間を制する者が国試を制す！</p>
             </div>
             <h2 class="cyber-title">▶ SELECT MISSION LEVEL</h2>
             <button class="mode-btn" onclick="startQuiz(10)"><div class="mode-title">QUICK HACK (10問)</div></button>
             <button class="mode-btn" onclick="startQuiz(20)"><div class="mode-title">NEURAL DRIVE (20問)</div></button>
             <button class="mode-btn" onclick="startQuiz(30)"><div class="mode-title">SYSTEM MASTER (30問)</div></button>
+            <button class="archive-btn" onclick="openStatsScreen()">[ ARCHIVE ] 統計・ログデータを確認する</button>
         </div>
 
         <div class="quiz-card" id="quiz-contents" style="display: none;">
             <div class="q-progress">MISSION <span id="current-q-num">-</span> / <span id="total-q-num">-</span></div>
             <h2 class="question-text" id="question-text">Loading...</h2>
             <div class="options-container" id="options-area"></div>
-            
             <div class="result-container" id="result-area" style="display: none;">
-                <div class="explanation-box">
-                    <h3 class="exp-title">[ SYSTEM ANALYSIS : 教官の解説 ]</h3>
-                    <p id="explanation"></p>
-                </div>
+                <div class="explanation-box"><h3 class="exp-title">[ SYSTEM ANALYSIS : 教官の解説 ]</h3><p id="explanation"></p></div>
                 <button class="next-btn" id="next-btn">NEXT MISSION &gt;&gt;</button>
             </div>
         </div>
 
+        <div class="quiz-card" id="final-screen" style="display: none;">
+            <h2 class="cyber-title" style="text-align: center;">MISSION COMPLETE</h2>
+            <div id="final-score-display" class="final-score-display"></div>
+            <div id="comparison-box" class="comparison-box"></div>
+            <div class="charts-container">
+                <div class="chart-wrapper"><canvas id="doughnutChart"></canvas></div>
+                <div class="chart-wrapper" style="margin-top: 20px;"><canvas id="historyChart"></canvas></div>
+            </div>
+            <button class="next-btn" style="margin-top:20px;" onclick="location.reload()">&lt;&lt; トップに戻る</button>
+        </div>
+
+        <div class="quiz-card" id="stats-screen" style="display: none;">
+            <h2 class="cyber-title" style="text-align: center;">DATA CENTER</h2>
+            <div class="stats-summary-container">
+                <div class="stats-summary-card"><h4>WEEKLY</h4><div class="stats-val" id="weekly-count">0<span>問</span></div><div class="stats-val" id="weekly-rate">0<span>%</span></div></div>
+                <div class="stats-summary-card"><h4>MONTHLY</h4><div class="stats-val" id="monthly-count">0<span>問</span></div><div class="stats-val" id="monthly-rate">0<span>%</span></div></div>
+            </div>
+            <h3 style="color: #00f3ff; font-family: 'Orbitron'; font-size: 14px; margin-top: 25px; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 5px;">LOG HISTORY</h3>
+            <div class="log-list" id="log-list"></div>
+            <button class="next-btn" style="margin-top: 20px;" onclick="closeStatsScreen()">&lt;&lt; BACK TO MENU</button>
+        </div>
     </div>
     <script src="main.js"></script>
 </body>
