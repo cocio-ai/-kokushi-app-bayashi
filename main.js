@@ -28,7 +28,6 @@ function getRandomVoice(type) {
     return lines[Math.floor(Math.random() * lines.length)];
 }
 
-// ★起動時にセーブデータがあるかチェック！★
 window.onload = () => {
     if (localStorage.getItem('bayashi_save_data')) {
         document.getElementById('resume-btn').style.display = 'block';
@@ -121,7 +120,6 @@ document.getElementById("next-btn").onclick = () => {
 };
 
 function startQuiz(limit) { 
-    // 新しく始める時は過去のセーブを消す
     localStorage.removeItem('bayashi_save_data');
     
     questionLimit = limit; currentIndex = 0; score = 0;
@@ -134,7 +132,6 @@ function startQuiz(limit) {
     fetchQuizData(); 
 }
 
-// ★セーブ機能とリタイア機能★
 function quitQuiz(isSave) {
     if (isSave) {
         const saveData = { quizData, currentIndex, score, questionLimit };
@@ -149,7 +146,6 @@ function quitQuiz(isSave) {
     }
 }
 
-// ★続きから再開する機能★
 function resumeQuiz() {
     const saved = localStorage.getItem('bayashi_save_data');
     if (saved) {
@@ -172,7 +168,6 @@ function resumeQuiz() {
 }
 
 async function saveAndShowFinalResult() {
-    // 完全にクリアしたらセーブデータを消す
     localStorage.removeItem('bayashi_save_data');
 
     document.getElementById("quiz-contents").style.display = "none";
@@ -201,7 +196,7 @@ function drawDoughnutChart(correctCount, wrongCount) {
     donutChartInstance = new Chart(document.getElementById('doughnutChart').getContext('2d'), {
         type: 'doughnut',
         data: { labels: ['正解', '不正解'], datasets: [{ data: [correctCount, wrongCount], backgroundColor: ['rgba(0, 255, 128, 0.8)', 'rgba(255, 0, 85, 0.5)'], borderColor: ['#00ff80', '#ff0055'], borderWidth: 2 }] },
-        options: { cutout: '65%', plugins: { legend: { labels: { color: '#e2e8f0' } }, title: { display: true, text: '今回の正答比率', color: '#00f3ff' } } }
+        options: { cutout: '65%', plugins: { legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } }, title: { display: true, text: '今回の正答比率', color: '#00f3ff', font: { family: 'Orbitron' } } } }
     });
 }
 async function drawHistoryChart() {
@@ -211,8 +206,8 @@ async function drawHistoryChart() {
     snapshot.forEach(doc => { labels.push("T-" + attempt); dataPoints.push(doc.data().percentage); borderPoints.push(PASSING_BORDER); attempt++; });
     lineChartInstance = new Chart(document.getElementById('historyChart').getContext('2d'), {
         type: 'line',
-        data: { labels: labels, datasets: [ { label: '正答率 (%)', data: dataPoints, borderColor: '#00f3ff', backgroundColor: 'rgba(0, 243, 255, 0.1)', borderWidth: 3, fill: true }, { label: 'ボーダー (70%)', data: borderPoints, borderColor: '#ff0055', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false } ] },
-        options: { plugins: { legend: { labels: { color: '#e2e8f0' } }, title: { display: true, text: '成長と合格ライン', color: '#00f3ff' } }, scales: { x: { ticks: { color: '#94a3b8' } }, y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8' } } } }
+        data: { labels: labels, datasets: [ { label: '正答率 (%)', data: dataPoints, borderColor: '#00f3ff', backgroundColor: 'rgba(0, 243, 255, 0.1)', borderWidth: 3, fill: true, tension: 0.3 }, { label: 'ボーダー (70%)', data: borderPoints, borderColor: '#ff0055', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false } ] },
+        options: { plugins: { legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } }, title: { display: true, text: '成長と合格ライン', color: '#00f3ff', font: { family: 'Orbitron' } } }, scales: { x: { ticks: { color: '#94a3b8', font: { family: 'Orbitron' } } }, y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8', font: { family: 'Orbitron' } } } } }
     });
 }
 async function openStatsScreen() {
@@ -223,7 +218,7 @@ async function openStatsScreen() {
         const now = new Date().getTime(), oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000), oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
         let wTotal = 0, wCorrect = 0, mTotal = 0, mCorrect = 0;
         const logList = document.getElementById("log-list"); logList.innerHTML = ""; 
-        if (snapshot.empty) { logList.innerHTML = `<p style="text-align: center;">戦歴なし</p>`; return; }
+        if (snapshot.empty) { logList.innerHTML = `<p style="text-align: center; color: #aaa;">戦歴なし</p>`; return; }
         snapshot.forEach(doc => {
             const data = doc.data(); if (!data.timestamp) return; 
             const t = data.timestamp.toDate().getTime();
@@ -239,6 +234,6 @@ async function openStatsScreen() {
         });
         document.getElementById("weekly-count").innerText = wTotal; document.getElementById("weekly-rate").innerText = wTotal > 0 ? Math.round((wCorrect / wTotal) * 100) : 0;
         document.getElementById("monthly-count").innerText = mTotal; document.getElementById("monthly-rate").innerText = mTotal > 0 ? Math.round((mCorrect / mTotal) * 100) : 0;
-    } catch (e) { document.getElementById("log-list").innerHTML = `<p>データ取得エラー</p>`; }
+    } catch (e) { document.getElementById("log-list").innerHTML = `<p style="color: #ff0055;">データ取得エラー</p>`; }
 }
 function closeStatsScreen() { document.getElementById("stats-screen").style.display = "none"; document.getElementById("start-screen").style.display = "block"; }
