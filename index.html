@@ -22,8 +22,10 @@
                 <img src="kaniwo.png" alt="かにお教官">
                 <p>かにお教官</p>
             </div>
-            <div id="teacher-message-box">
-                <p id="teacher-message">「よし！今日も限界を突破するぞ！特訓メニューを選べ！」</p>
+            <div id="teacher-message-wrapper">
+                <div id="teacher-message-box">
+                    <p id="teacher-message">「よし！今日も限界を突破するぞ！特訓メニューを選べ！」</p>
+                </div>
             </div>
         </div>
 
@@ -38,12 +40,20 @@
                 <div class="mode-time">⏱ 目安: 約10分</div>
             </div>
 
-            <div class="mode-card" onclick="startQuiz(50)">
+            <div class="mode-card" onclick="startQuiz(20)">
                 <div class="mode-info">
-                    <h3 class="mode-title">50問 ハード特訓</h3>
+                    <h3 class="mode-title">20問 スタンダード特訓</h3>
+                    <p class="mode-desc">日々の積み重ねに最適！確かな実力を身につけろ。</p>
+                </div>
+                <div class="mode-time">⏱ 目安: 約20分</div>
+            </div>
+
+            <div class="mode-card" onclick="startQuiz(30)">
+                <div class="mode-info">
+                    <h3 class="mode-title">30問 ハード特訓</h3>
                     <p class="mode-desc">集中力を鍛えろ！合否を分ける中規模ミッション。</p>
                 </div>
-                <div class="mode-time">⏱ 目安: 約45分</div>
+                <div class="mode-time">⏱ 目安: 約30分</div>
             </div>
 
             <div class="mode-card" onclick="startQuiz(120)">
@@ -54,7 +64,7 @@
                 <div class="mode-time" style="color: #ff0055;">⏱ 目安: 約120分</div>
             </div>
 
-            <button class="stats-btn" onclick="openStatsScreen()">📊 過去の戦歴・データログを確認する</button>
+            <button class="stats-btn" onclick="openStatsScreen()">📊 過去の戦歴・データログを確認</button>
         </div>
 
         <div id="quiz-contents" style="display: none;">
@@ -119,6 +129,6 @@
         </div>
     </div>
 
-    <script src="main.js?v=saveSystem"></script>
+    <script src="main.js?v=cyberSupreme"></script>
 </body>
 </html>
