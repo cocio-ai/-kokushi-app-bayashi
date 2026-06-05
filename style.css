@@ -34,7 +34,6 @@ header span {
     letter-spacing: 2px;
 }
 
-/* 教官メッセージエリア */
 #teacher-section {
     display: flex;
     align-items: flex-start;
@@ -65,7 +64,7 @@ header span {
     font-family: 'Orbitron', sans-serif;
 }
 
-#teacher-message-box { flex: 1; }
+#teacher-message-box { flex: 1; position: relative; }
 #teacher-message {
     margin: 0;
     font-weight: bold;
@@ -74,7 +73,6 @@ header span {
     color: #fff;
 }
 
-/* ★モード選択カード（新デザイン）★ */
 .mode-card {
     background: linear-gradient(135deg, rgba(0, 243, 255, 0.1) 0%, rgba(0, 10, 25, 0.9) 100%);
     border: 1px solid rgba(0, 243, 255, 0.5);
@@ -88,27 +86,20 @@ header span {
     flex-direction: column;
     box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
 }
-
 .mode-card:hover {
     background: linear-gradient(135deg, rgba(0, 243, 255, 0.2) 0%, rgba(0, 10, 25, 0.9) 100%);
     border-color: #00f3ff;
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
     transform: translateX(5px);
 }
-
 .mode-info { margin-bottom: 10px; }
 .mode-title {
     margin: 0 0 5px 0;
     color: #fff;
     font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
     font-size: 1.2rem;
-    text-shadow: 0 0 5px rgba(255,255,255,0.5);
 }
-.mode-desc {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #aaa;
-}
+.mode-desc { margin: 0; font-size: 0.85rem; color: #aaa; }
 .mode-time {
     align-self: flex-end;
     font-family: 'Orbitron', sans-serif;
@@ -117,7 +108,6 @@ header span {
     font-weight: bold;
 }
 
-/* 各種ボタン */
 .stats-btn, .menu-btn {
     width: 100%;
     padding: 15px;
@@ -140,7 +130,40 @@ header span {
 }
 .stats-btn:hover { background: rgba(255, 0, 255, 0.1); box-shadow: 0 0 15px rgba(255, 0, 255, 0.5); }
 
-/* クイズ画面 */
+/* ★再開ボタンのデザイン★ */
+.resume-btn {
+    border-color: #ffaa00;
+    color: #ffaa00;
+    background: linear-gradient(45deg, rgba(255, 170, 0, 0.1), rgba(0, 10, 25, 0.8));
+    box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+    margin-bottom: 20px;
+}
+.resume-btn:hover {
+    background: rgba(255, 170, 0, 0.2);
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.6);
+}
+
+/* ★クイズ画面内のセーブ・リタイア操作パネル★ */
+.quiz-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.control-btn {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.5);
+    transition: 0.2s;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+.save-btn { border: 1px solid #ffaa00; color: #ffaa00; }
+.save-btn:hover { background: rgba(255, 170, 0, 0.2); box-shadow: 0 0 10px rgba(255, 170, 0, 0.4); }
+.quit-btn { border: 1px solid #888; color: #aaa; }
+.quit-btn:hover { background: rgba(255, 0, 85, 0.2); border-color: #ff0055; color: #ff0055; }
+
 #quiz-contents {
     border: 1px solid #00f3ff;
     border-radius: 8px;
@@ -148,7 +171,6 @@ header span {
     background: rgba(5, 15, 30, 0.9);
     box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
 }
-
 .mission-title {
     color: #00f3ff;
     font-family: 'Orbitron', sans-serif;
@@ -157,15 +179,12 @@ header span {
     margin: 0;
     text-shadow: 0 0 8px #00f3ff;
 }
-
 .cyber-line {
     border: none;
     height: 1px;
     background: linear-gradient(90deg, transparent, #00f3ff, transparent);
     margin: 15px 0;
 }
-
-/* ★問題文・解説の装飾強化★ */
 .question-box {
     background: rgba(255, 255, 255, 0.03);
     padding: 15px;
@@ -173,13 +192,7 @@ header span {
     border-left: 3px solid #fff;
     margin-bottom: 20px;
 }
-
-#question-text {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin: 0;
-    color: #fff;
-}
+#question-text { font-size: 1.1rem; line-height: 1.6; margin: 0; color: #fff; }
 
 .option-btn {
     width: 100%;
@@ -223,7 +236,6 @@ header span {
     box-shadow: 0 0 15px rgba(0,243,255,0.5);
 }
 
-/* ★データログ画面（ダッシュボード風に進化）★ */
 .result-title {
     color: #fff;
     text-align: center;
@@ -231,12 +243,7 @@ header span {
     text-shadow: 0 0 10px #fff;
     letter-spacing: 2px;
 }
-
-.stats-dashboard {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 25px;
-}
+.stats-dashboard { display: flex; justify-content: space-between; margin-bottom: 25px; }
 .stat-box {
     background: rgba(0, 10, 25, 0.6);
     border: 1px solid #ff00ff;
@@ -246,53 +253,19 @@ header span {
     text-align: center;
     box-shadow: inset 0 0 10px rgba(255, 0, 255, 0.1);
 }
-.stat-box h4 {
-    margin: 0 0 10px 0;
-    color: #ff00ff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9rem;
-}
+.stat-box h4 { margin: 0 0 10px 0; color: #ff00ff; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; }
 .stat-box p { margin: 5px 0; font-size: 0.85rem; color: #aaa; }
-.stat-num {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-}
+.stat-num { font-size: 1.5rem; font-weight: bold; color: #fff; font-family: 'Orbitron', sans-serif; }
 
 .log-title { color: #00f3ff; font-family: 'Orbitron', sans-serif; font-size: 1rem; border-bottom: 1px solid #00f3ff; padding-bottom: 5px; }
-
-.cyber-log-list {
-    max-height: 300px;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.3);
-    padding: 10px;
-    border-radius: 5px;
-}
-.log-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-    padding: 12px 5px;
-    font-size: 0.9rem;
-}
+.cyber-log-list { max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; }
+.log-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 243, 255, 0.2); padding: 12px 5px; font-size: 0.9rem; }
 .log-date { color: #888; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; }
 .log-mode { color: #fff; font-weight: bold; }
-.log-pct {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: bold;
-    color: #00ff80;
-    background: rgba(0, 255, 128, 0.1);
-    padding: 3px 8px;
-    border-radius: 3px;
-}
+.log-pct { font-family: 'Orbitron', sans-serif; font-weight: bold; color: #00ff80; background: rgba(0, 255, 128, 0.1); padding: 3px 8px; border-radius: 3px; }
 .log-pct.low { color: #ff0055; background: rgba(255, 0, 85, 0.1); }
-
-.chart-wrapper {
-    background: rgba(0, 10, 25, 0.8);
-    border: 1px solid #00f3ff;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 20px;
-}
+.chart-wrapper { background: rgba(0, 10, 25, 0.8); border: 1px solid #00f3ff; border-radius: 8px; padding: 10px; margin-bottom: 20px; }
+.chart-container { position: relative; height: 250px; }
+#final-score-display { text-align: center; font-size: 4rem; font-family: 'Orbitron', sans-serif; font-weight: 900; margin: 20px 0; text-shadow: 0 0 20px currentColor; }
+.clear-text { color: #00ff80; font-weight: bold; text-align: center; }
+.warning-text { color: #ff0055; font-weight: bold; text-align: center; }
