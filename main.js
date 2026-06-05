@@ -9,7 +9,6 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 400エラー回避用公式ルート
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv";
 
 let quizData = [];
@@ -28,6 +27,13 @@ function getRandomVoice(type) {
     const lines = voiceLines[type];
     return lines[Math.floor(Math.random() * lines.length)];
 }
+
+// ★起動時にセーブデータがあるかチェック！★
+window.onload = () => {
+    if (localStorage.getItem('bayashi_save_data')) {
+        document.getElementById('resume-btn').style.display = 'block';
+    }
+};
 
 function fetchQuizData() {
     Papa.parse(SHEET_CSV_URL, {
@@ -63,7 +69,6 @@ function loadQuestion() {
     if (!q) return; 
     
     document.getElementById("current-q-num").innerText = currentIndex + 1;
-    // 問題文の改行を反映
     document.getElementById("question-text").innerHTML = q["問題文"].replace(/\n/g, '<br>');
     
     if (currentIndex > 0) document.getElementById("teacher-message").innerText = getRandomVoice("encourage");
@@ -97,7 +102,6 @@ function checkAnswer(i, btn) {
         document.getElementById("teacher-message").innerText = getRandomVoice("wrong");
     }
     
-    // ★解説もしっかり表示（改行対応）★
     let expText = q["解説"] ? q["解説"].replace(/\n/g, '<br>') : "解説データが登録されていないぞ！";
     document.getElementById("explanation").innerHTML = expText;
     document.getElementById("result-area").style.display = "block";
@@ -117,12 +121,60 @@ document.getElementById("next-btn").onclick = () => {
 };
 
 function startQuiz(limit) { 
+    // 新しく始める時は過去のセーブを消す
+    localStorage.removeItem('bayashi_save_data');
+    
     questionLimit = limit; currentIndex = 0; score = 0;
-    document.getElementById("teacher-message").innerText = "「データアクセス中... 待機しろ！」";
+    if(limit === 120) {
+        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、限界を見せてみろ！」";
+    } else {
+        document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
+    }
+    document.getElementById("teacher-message").innerText += "\n(データアクセス中... 待機しろ！)";
     fetchQuizData(); 
 }
 
+// ★セーブ機能とリタイア機能★
+function quitQuiz(isSave) {
+    if (isSave) {
+        const saveData = { quizData, currentIndex, score, questionLimit };
+        localStorage.setItem('bayashi_save_data', JSON.stringify(saveData));
+        alert("「現在の状態をセーブしたぞ！しっかり休んで、また戻ってこい！」");
+        location.reload();
+    } else {
+        if(confirm("「本当にリタイアするのか！？ここまでの記録は消えてしまうぞ！」")) {
+            localStorage.removeItem('bayashi_save_data');
+            location.reload();
+        }
+    }
+}
+
+// ★続きから再開する機能★
+function resumeQuiz() {
+    const saved = localStorage.getItem('bayashi_save_data');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        quizData = parsed.quizData;
+        currentIndex = parsed.currentIndex;
+        score = parsed.score;
+        questionLimit = parsed.questionLimit;
+        
+        document.getElementById("total-q-num").innerText = quizData.length;
+        document.getElementById("start-screen").style.display = "none";
+        document.getElementById("quiz-contents").style.display = "block";
+        
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+        loadQuestion();
+        
+        document.getElementById("teacher-message").innerText = "「よく戻ってきた！セーブ地点から特訓再開だ！」";
+    }
+}
+
 async function saveAndShowFinalResult() {
+    // 完全にクリアしたらセーブデータを消す
+    localStorage.removeItem('bayashi_save_data');
+
     document.getElementById("quiz-contents").style.display = "none";
     document.getElementById("final-screen").style.display = "block";
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -144,7 +196,6 @@ async function saveAndShowFinalResult() {
 }
 
 let donutChartInstance = null; let lineChartInstance = null;
-
 function drawDoughnutChart(correctCount, wrongCount) {
     if(donutChartInstance) donutChartInstance.destroy();
     donutChartInstance = new Chart(document.getElementById('doughnutChart').getContext('2d'), {
@@ -153,20 +204,17 @@ function drawDoughnutChart(correctCount, wrongCount) {
         options: { cutout: '65%', plugins: { legend: { labels: { color: '#e2e8f0' } }, title: { display: true, text: '今回の正答比率', color: '#00f3ff' } } }
     });
 }
-
 async function drawHistoryChart() {
     if(lineChartInstance) lineChartInstance.destroy();
     const snapshot = await db.collection("examResults").orderBy("timestamp", "asc").limit(15).get();
     const labels = [], dataPoints = [], borderPoints = []; let attempt = 1;
     snapshot.forEach(doc => { labels.push("T-" + attempt); dataPoints.push(doc.data().percentage); borderPoints.push(PASSING_BORDER); attempt++; });
-
     lineChartInstance = new Chart(document.getElementById('historyChart').getContext('2d'), {
         type: 'line',
         data: { labels: labels, datasets: [ { label: '正答率 (%)', data: dataPoints, borderColor: '#00f3ff', backgroundColor: 'rgba(0, 243, 255, 0.1)', borderWidth: 3, fill: true }, { label: 'ボーダー (70%)', data: borderPoints, borderColor: '#ff0055', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false } ] },
         options: { plugins: { legend: { labels: { color: '#e2e8f0' } }, title: { display: true, text: '成長と合格ライン', color: '#00f3ff' } }, scales: { x: { ticks: { color: '#94a3b8' } }, y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8' } } } }
     });
 }
-
 async function openStatsScreen() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("stats-screen").style.display = "block";
@@ -175,9 +223,7 @@ async function openStatsScreen() {
         const now = new Date().getTime(), oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000), oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
         let wTotal = 0, wCorrect = 0, mTotal = 0, mCorrect = 0;
         const logList = document.getElementById("log-list"); logList.innerHTML = ""; 
-        
         if (snapshot.empty) { logList.innerHTML = `<p style="text-align: center;">戦歴なし</p>`; return; }
-        
         snapshot.forEach(doc => {
             const data = doc.data(); if (!data.timestamp) return; 
             const t = data.timestamp.toDate().getTime();
