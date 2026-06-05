@@ -23,52 +23,95 @@
                 <p>かにお教官</p>
             </div>
             <div id="teacher-message-box">
-                <p id="teacher-message">「よし！今日も限界を突破するぞ！」</p>
+                <p id="teacher-message">「よし！今日も限界を突破するぞ！特訓メニューを選べ！」</p>
             </div>
         </div>
 
         <div id="start-screen">
-            <button class="menu-btn" onclick="startQuiz(10)">10問 特訓</button>
-            <button class="menu-btn" onclick="startQuiz(50)">50問 特訓</button>
-            <button class="menu-btn" onclick="startQuiz(120)">120問 本番モード</button>
-            <button class="menu-btn stats-btn" onclick="openStatsScreen()">過去の戦歴を見る</button>
+            <div class="mode-card" onclick="startQuiz(10)">
+                <div class="mode-info">
+                    <h3 class="mode-title">10問 ショート特訓</h3>
+                    <p class="mode-desc">スキマ時間の腕試し！サクッと知識の確認だ。</p>
+                </div>
+                <div class="mode-time">⏱ 目安: 約10分</div>
+            </div>
+
+            <div class="mode-card" onclick="startQuiz(50)">
+                <div class="mode-info">
+                    <h3 class="mode-title">50問 ハード特訓</h3>
+                    <p class="mode-desc">集中力を鍛えろ！合否を分ける中規模ミッション。</p>
+                </div>
+                <div class="mode-time">⏱ 目安: 約45分</div>
+            </div>
+
+            <div class="mode-card" onclick="startQuiz(120)">
+                <div class="mode-info">
+                    <h3 class="mode-title" style="color: #ff0055;">120問 本番モード</h3>
+                    <p class="mode-desc">国試本番と同ボリューム！お前の限界を引き出せ！</p>
+                </div>
+                <div class="mode-time" style="color: #ff0055;">⏱ 目安: 約120分</div>
+            </div>
+
+            <button class="stats-btn" onclick="openStatsScreen()">📊 過去の戦歴・データログを確認する</button>
         </div>
 
         <div id="quiz-contents" style="display: none;">
-            <h2 class="mission-title">MISSION <span id="current-q-num">1</span> / <span id="total-q-num">0</span></h2>
+            <div class="mission-header">
+                <h2 class="mission-title">MISSION <span id="current-q-num">1</span> / <span id="total-q-num">0</span></h2>
+            </div>
             <hr class="cyber-line">
-            <p id="question-text">Loading...</p>
+            
+            <div class="question-box">
+                <p id="question-text">Loading...</p>
+            </div>
             
             <div id="options-area"></div>
             
             <div id="result-area" style="display: none;">
-                <h3>教官の解説</h3>
-                <p id="explanation"></p>
+                <div class="explanation-box">
+                    <h3>💡 教官の解説</h3>
+                    <p id="explanation"></p>
+                </div>
             </div>
             
             <button id="next-btn" style="display: none;">NEXT MISSION >></button>
         </div>
 
         <div id="final-screen" style="display: none;">
-            <h2>特訓完了！</h2>
+            <h2 class="result-title">特訓完了！</h2>
             <div id="final-score-display"></div>
             <div id="comparison-box"></div>
-            <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
-            <div class="chart-container"><canvas id="historyChart"></canvas></div>
+            
+            <div class="chart-wrapper">
+                <div class="chart-container"><canvas id="doughnutChart"></canvas></div>
+            </div>
+            <div class="chart-wrapper">
+                <div class="chart-container"><canvas id="historyChart"></canvas></div>
+            </div>
+            
             <button class="menu-btn" onclick="location.reload()">トップに戻る</button>
         </div>
 
         <div id="stats-screen" style="display: none;">
-            <h2>バヤシの戦歴</h2>
-            <div class="stats-summary">
-                <p>週間: <span id="weekly-count">0</span>問 / 正答率: <span id="weekly-rate">0</span>%</p>
-                <p>月間: <span id="monthly-count">0</span>問 / 正答率: <span id="monthly-rate">0</span>%</p>
+            <h2 class="result-title">DATA LOGS</h2>
+            <div class="stats-dashboard">
+                <div class="stat-box">
+                    <h4>WEEKLY</h4>
+                    <p><span id="weekly-count" class="stat-num">0</span> 問</p>
+                    <p>正答率 <span id="weekly-rate" class="stat-num">0</span> %</p>
+                </div>
+                <div class="stat-box">
+                    <h4>MONTHLY</h4>
+                    <p><span id="monthly-count" class="stat-num">0</span> 問</p>
+                    <p>正答率 <span id="monthly-rate" class="stat-num">0</span> %</p>
+                </div>
             </div>
-            <div id="log-list"></div>
-            <button class="menu-btn" onclick="closeStatsScreen()">戻る</button>
+            <h3 class="log-title">RECENT MISSIONS</h3>
+            <div id="log-list" class="cyber-log-list"></div>
+            <button class="menu-btn" style="margin-top:20px;" onclick="closeStatsScreen()">戻る</button>
         </div>
     </div>
 
-    <script src="main.js?v=cyberMAX"></script>
+    <script src="main.js?v=ultimate"></script>
 </body>
 </html>
