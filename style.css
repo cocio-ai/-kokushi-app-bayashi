@@ -1,64 +1,186 @@
-/* 全体のベース設定 */
-body { font-family: 'Noto Sans JP', sans-serif; background-color: #050914; background-image: radial-gradient(circle at center, #0a1128 0%, #050914 100%); color: #e2e8f0; margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
-.app-container { width: 100%; max-width: 600px; }
-.app-header { text-align: center; margin-bottom: 20px; }
-.main-title { font-weight: 900; font-size: 26px; color: #ffffff; margin: 0; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); letter-spacing: 2px; }
-.title-sub { font-size: 34px; color: #00f3ff; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px rgba(0, 243, 255, 0.8); }
-
-/* かにお教官エリア */
-.teacher-area { display: flex; align-items: center; margin-bottom: 25px; }
-.teacher-profile { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
-.teacher-icon { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #00f3ff; object-fit: cover; box-shadow: 0 0 15px rgba(0,243,255,0.6); animation: float 3s ease-in-out infinite; }
-.teacher-name { font-size: 11px; color: #00f3ff; margin-top: 5px; font-weight: bold; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.balloon { background: rgba(15, 23, 42, 0.85); border: 2px solid #00f3ff; border-radius: 10px; padding: 15px 20px; flex-grow: 1; color: #ffffff; margin-left: 15px; font-weight: bold; font-size: 15px; line-height: 1.5; box-shadow: inset 0 0 10px rgba(0,243,255,0.2); position: relative; }
-.balloon::before { content: ""; position: absolute; top: 50%; left: -12px; margin-top: -6px; border: 6px solid transparent; border-right: 6px solid #00f3ff; }
-
-/* カードUI */
-.start-screen, .quiz-card { background: rgba(10, 15, 30, 0.7); border: 1px solid rgba(0, 243, 255, 0.4); border-top: 4px solid #00f3ff; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
-.cyber-title { font-family: 'Orbitron', sans-serif; color: #00f3ff; font-size: 18px; margin-bottom: 20px; text-align: center; border-bottom: 1px solid rgba(0,243,255,0.3); padding-bottom: 10px;}
-
-/* ボタン類 */
-.mode-btn { display: block; width: 100%; background: linear-gradient(90deg, rgba(0, 243, 255, 0.1) 0%, rgba(0, 0, 0, 0) 100%); border: 1px solid #38bdf8; border-left: 5px solid #00f3ff; border-radius: 6px; padding: 18px; margin-bottom: 15px; color: #ffffff; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; cursor: pointer; text-align: left; transition: all 0.2s ease; }
-.mode-title { font-size: 18px; font-weight: bold; }
-.mode-desc { font-size: 12px; color: #cbd5e1; margin-top: 8px; font-family: 'Noto Sans JP', sans-serif; line-height: 1.5; font-weight: normal; }
-.mode-time { font-size: 11px; color: #00f3ff; font-family: 'Orbitron', sans-serif; font-weight: bold; margin-top: 8px; letter-spacing: 1px; }
-.mode-btn:hover { background: rgba(0, 243, 255, 0.2); transform: scale(1.02); box-shadow: 0 0 15px rgba(0,243,255,0.4); }
-
-/* 🔥 本番モード専用デザイン 🔥 */
-.mode-btn.final-mode { border-left: 5px solid #ff0055; background: linear-gradient(90deg, rgba(255, 0, 85, 0.15) 0%, rgba(0, 0, 0, 0) 100%); border-color: #ff0055; }
-.mode-btn.final-mode:hover { background: rgba(255, 0, 85, 0.25); box-shadow: 0 0 15px rgba(255,0,85,0.4); border-color: #ff3377; }
-.mode-btn.final-mode .mode-time { color: #ff80a6; }
-
-.archive-btn { display: block; width: 100%; background: transparent; border: 1px dashed #94a3b8; color: #94a3b8; padding: 15px; border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.2s; margin-top: 10px;}
-.archive-btn:hover { border-color: #00f3ff; color: #00f3ff; }
-
-/* クイズ用 */
-.q-progress { font-family: 'Orbitron', sans-serif; color: #38bdf8; font-size: 14px; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px;}
-.question-text { font-size: 18px; line-height: 1.6; margin-bottom: 25px; font-weight: 700; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 15px;}
-.option-btn { background-color: rgba(15, 23, 42, 0.9); border: 2px solid #1e293b; border-radius: 8px; color: #e2e8f0; padding: 16px; margin-bottom: 12px; width: 100%; text-align: left; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; line-height: 1.4; }
-.option-btn:hover:not([disabled]) { border-color: #38bdf8; background-color: rgba(56, 189, 248, 0.1); transform: translateX(5px); }
-.option-btn.correct { border-color: #00ff80; background-color: rgba(0, 255, 128, 0.15); color: #00ff80; box-shadow: 0 0 15px rgba(0,255,128,0.3); }
-.option-btn.wrong { border-color: #ff0055; background-color: rgba(255, 0, 85, 0.15); color: #ff80a6; }
-.explanation-box { background: rgba(0, 0, 0, 0.3); border-left: 4px solid #00f3ff; padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0;}
-.exp-title { color: #00f3ff; font-family: 'Orbitron', sans-serif; font-size: 14px; margin: 0 0 10px 0; }
-#explanation { font-size: 15px; line-height: 1.6; margin: 0; }
-.next-btn { background: linear-gradient(45deg, #0088ff, #00f3ff); color: #000; border: none; border-radius: 8px; padding: 18px; width: 100%; font-size: 18px; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; cursor: pointer; font-weight: 900; box-shadow: 0 5px 15px rgba(0,243,255,0.4); transition: 0.2s; }
-.next-btn:hover { transform: scale(1.03); box-shadow: 0 8px 25px rgba(0,243,255,0.6); }
-
-/* 結果・グラフ・アーカイブ用 */
-.final-score-display { text-align: center; font-size: 48px; font-family: 'Orbitron', sans-serif; font-weight: 900; color: #00ff80; text-shadow: 0 0 20px rgba(0,255,128,0.6); margin: 10px 0; }
-.comparison-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 25px; font-weight: bold; }
-.clear-text { color: #00f3ff; margin: 0; font-size: 18px; text-shadow: 0 0 10px rgba(0,243,255,0.5);}
-.warning-text { color: #ff0055; margin: 0; font-size: 18px; text-shadow: 0 0 10px rgba(255,0,85,0.5);}
-.charts-container { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 15px; }
-.chart-wrapper { position: relative; width: 100%; }
-.stats-summary-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.stats-summary-card { width: 48%; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid rgba(0,243,255,0.2); }
-.stats-summary-card h4 { margin: 0 0 10px 0; color: #38bdf8; font-family: 'Orbitron'; font-size: 14px; }
-.stats-val { font-size: 24px; font-weight: 900; color: #fff; font-family: 'Orbitron'; }
-.stats-val span { font-size: 12px; color: #94a3b8; margin-left: 3px; font-family: 'Noto Sans JP'; }
-.log-list { max-height: 250px; overflow-y: auto; }
-.log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-family: 'Orbitron', sans-serif; font-size: 14px; }
-.log-pct { font-weight: 900; color: #00ff80; }
-.log-pct.low { color: #ff0055; }
+body {
+    background-color: #0b132b;
+    color: #fff;
+    font-family: 'Noto Sans JP', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+#app-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+header h1 {
+    color: #fff;
+    font-size: 1.5rem;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    text-align: center;
+    margin-bottom: 30px;
+}
+header span {
+    color: #00f3ff;
+    text-shadow: 0 0 15px #00f3ff;
+    font-size: 1.8rem;
+}
+#teacher-section {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+.teacher-profile {
+    text-align: center;
+    margin-right: 15px;
+}
+.teacher-profile img {
+    border: 2px solid #00f3ff;
+    border-radius: 50%;
+    padding: 3px;
+    box-shadow: 0 0 15px #00f3ff;
+    width: 65px;
+    height: 65px;
+    background: #fff;
+    object-fit: cover;
+}
+.teacher-profile p {
+    color: #00f3ff;
+    font-size: 0.75rem;
+    margin-top: 8px;
+    font-weight: bold;
+}
+#teacher-message-box {
+    flex: 1;
+    border: 1px solid #00f3ff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(0,243,255,0.2);
+    background: rgba(0,10,25,0.8);
+}
+#teacher-message {
+    margin: 0;
+    font-weight: bold;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #fff;
+}
+.menu-btn {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: transparent;
+    border: 2px solid #00f3ff;
+    color: #00f3ff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,243,255,0.3);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.stats-btn {
+    border-color: #ff0055;
+    color: #ff0055;
+    box-shadow: 0 0 10px rgba(255,0,85,0.3);
+}
+#quiz-contents {
+    border: 1px solid #00f3ff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,243,255,0.2);
+    background: rgba(0,10,25,0.8);
+}
+.mission-title {
+    color: #00f3ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    margin-top: 0;
+    letter-spacing: 2px;
+}
+.cyber-line {
+    border: none;
+    border-top: 1px dashed rgba(0, 243, 255, 0.4);
+    margin: 15px 0;
+}
+#question-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    font-weight: bold;
+}
+.option-btn {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid #555;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.option-btn.correct {
+    background: rgba(0,255,128,0.3);
+    border-color: #00ff80;
+    color: #00ff80;
+}
+.option-btn.wrong {
+    background: rgba(255,0,85,0.3);
+    border-color: #ff0055;
+    color: #ff0055;
+}
+#result-area {
+    margin-top: 20px;
+    border-top: 1px solid #00f3ff;
+    padding-top: 15px;
+}
+#result-area h3 {
+    color: #00f3ff;
+}
+#next-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    background: #00f3ff;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+.chart-container {
+    position: relative;
+    height: 250px;
+    margin-bottom: 30px;
+}
+#final-score-display {
+    text-align: center;
+    font-size: 3rem;
+    font-family: 'Orbitron';
+    font-weight: bold;
+    margin: 20px 0;
+}
+.clear-text {
+    color: #00ff80;
+    font-weight: bold;
+}
+.warning-text {
+    color: #ff0055;
+    font-weight: bold;
+}
+.stats-summary {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(0,243,255,0.1);
+    border-radius: 5px;
+}
+.log-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #333;
+    padding: 10px 0;
+}
+.log-pct.low {
+    color: #ff0055;
+}
