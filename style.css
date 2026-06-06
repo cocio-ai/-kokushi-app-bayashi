@@ -6,7 +6,6 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
     padding: 0;
-    /* 近未来的なホログラムグリッド背景 */
     background-image: 
         linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
@@ -37,17 +36,22 @@ header span {
     font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
 }
 
-/* ★教官セクションと完璧な吹き出し★ */
+/* 教官セクションと完璧な吹き出し */
 #teacher-section {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     margin-bottom: 30px;
 }
 
 .teacher-profile {
-    text-align: center;
-    margin-right: 20px;
+    width: 75px;
     flex-shrink: 0;
+    text-align: center;
+    margin-right: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .teacher-profile img {
@@ -69,12 +73,13 @@ header span {
     font-family: 'Orbitron', sans-serif;
     letter-spacing: 1px;
     text-shadow: 0 0 5px #00f3ff;
+    white-space: nowrap;
 }
 
 #teacher-message-wrapper {
     flex: 1;
     display: flex;
-    align-items: center; /* 吹き出しを縦中央に */
+    align-items: center;
 }
 
 #teacher-message-box {
@@ -82,14 +87,12 @@ header span {
     background: rgba(0, 20, 40, 0.85);
     border: 2px solid #00f3ff;
     border-radius: 8px;
-    padding: 12px 18px;
+    padding: 15px 20px;
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-    /* ↓ここがポイント！テキスト量に合わせて幅が伸縮する！ */
-    display: inline-block;
-    width: fit-content;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* 吹き出しの尻尾（左側に向ける） */
 #teacher-message-box::before {
     content: '';
     position: absolute;
@@ -115,12 +118,12 @@ header span {
     margin: 0;
     font-weight: bold;
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
     color: #ffffff;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
-/* 近未来モード選択カード */
+/* モード選択カード */
 .mode-card {
     background: linear-gradient(135deg, rgba(0, 243, 255, 0.05) 0%, rgba(0, 15, 30, 0.9) 100%);
     border: 1px solid rgba(0, 243, 255, 0.4);
@@ -160,7 +163,7 @@ header span {
     font-size: 1.25rem;
     text-shadow: 0 0 5px #00f3ff;
 }
-.mode-desc { margin: 0; font-size: 0.85rem; color: #a0c0d0; }
+.mode-desc { margin: 0; font-size: 0.85rem; color: #a0c0d0; line-height: 1.4; }
 .mode-time {
     align-self: flex-end;
     font-family: 'Orbitron', sans-serif;
@@ -170,7 +173,7 @@ header span {
     letter-spacing: 1px;
 }
 
-/* ボタン群 */
+/* 各種ボタン */
 .stats-btn, .menu-btn {
     width: 100%;
     padding: 16px;
@@ -344,3 +347,11 @@ header span {
 #final-score-display { text-align: center; font-size: 4.5rem; font-family: 'Orbitron', sans-serif; font-weight: 900; margin: 25px 0; text-shadow: 0 0 30px currentColor; }
 .clear-text { color: #00ff80; font-weight: 900; text-align: center; font-size: 1.2rem; text-shadow: 0 0 10px #00ff80; }
 .warning-text { color: #ff0055; font-weight: 900; text-align: center; font-size: 1.2rem; text-shadow: 0 0 10px #ff0055; }
+
+/* ★追加：複数選択時の「選択中」エフェクト★ */
+.option-btn.selected {
+    background: rgba(0, 243, 255, 0.25);
+    border-color: #00f3ff;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.3);
+    transform: scale(1.02);
+}
