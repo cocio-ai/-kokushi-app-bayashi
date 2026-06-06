@@ -9,6 +9,7 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// 400エラー回避用公式ルート
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv";
 
 let quizData = [];
@@ -17,10 +18,24 @@ let score = 0;
 let questionLimit = 10;
 const PASSING_BORDER = 70; 
 
+// 複数選択用の変数
+let selectedOptions = [];
+let correctAnswers = [];
+
 const voiceLines = {
-    encourage: ["「さあ、次の問題だ！気合を入れ直せ！」", "「疲れてきた時が本当の勝負だぞ！食らいつけ！」", "「バヤシならできる！自分の努力を信じろ！」"],
-    correct: ["「大正解！その調子だバヤシ、お前の力は本物だ！」", "「ナイス判断だ！その知識が未来の患者を救うぞ！」"],
-    wrong: ["「ドンマイ！今のミスは本番で間違えないための投資だ！」", "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」"]
+    encourage: [
+        "「さあ、次の問題だ！気合を入れ直せ！」", 
+        "「疲れてきた時が本当の勝負だぞ！食らいつけ！」", 
+        "「バヤシならできる！自分の努力を信じろ！」"
+    ],
+    correct: [
+        "「大正解！その調子だバヤシ、お前の力は本物だ！」", 
+        "「ナイス判断だ！その知識が未来の患者を救うぞ！」"
+    ],
+    wrong: [
+        "「ドンマイ！今のミスは本番で間違えないための投資だ！」", 
+        "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」"
+    ]
 };
 
 function getRandomVoice(type) {
@@ -43,7 +58,8 @@ function fetchQuizData() {
             try {
                 let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
                 if (allData.length === 0) {
-                    document.getElementById("teacher-message").innerText = "「データが空だ！スプレッドシートを確認してくれ！」"; return;
+                    document.getElementById("teacher-message").innerText = "「データが空だ！スプレッドシートを確認してくれ！」"; 
+                    return;
                 }
                 allData.sort(() => Math.random() - 0.5);
                 quizData = allData.slice(0, questionLimit);
@@ -53,7 +69,9 @@ function fetchQuizData() {
                 document.getElementById("teacher-message").innerText = "「システムエラー: " + err.message + "」";
             }
         },
-        error: (err) => { document.getElementById("teacher-message").innerText = "「通信失敗: " + err.message + "」"; }
+        error: (err) => { 
+            document.getElementById("teacher-message").innerText = "「通信失敗: " + err.message + "」"; 
+        }
     });
 }
 
@@ -67,8 +85,20 @@ function loadQuestion() {
     const q = quizData[currentIndex];
     if (!q) return; 
     
+    // 状態のリセット
+    selectedOptions = [];
+    // カンマ区切りの正解番号を取得（複数選択対応）
+    const rawAnswer = String(q["正解番号"]).replace(/、/g, ',');
+    correctAnswers = rawAnswer.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
+
     document.getElementById("current-q-num").innerText = currentIndex + 1;
-    document.getElementById("question-text").innerHTML = q["問題文"].replace(/\n/g, '<br>');
+    
+    // 複数選択問題の場合は問題文にヒントを足す
+    let qText = q["問題文"].replace(/\n/g, '<br>');
+    if (correctAnswers.length > 1) {
+        qText = `<span style="color: #ffaa00;">【${correctAnswers.length}つ選べ】</span><br><br>` + qText;
+    }
+    document.getElementById("question-text").innerHTML = qText;
     
     if (currentIndex > 0) document.getElementById("teacher-message").innerText = getRandomVoice("encourage");
 
@@ -80,24 +110,50 @@ function loadQuestion() {
         const btn = document.createElement("button");
         btn.className = "option-btn";
         btn.innerText = text;
-        btn.onclick = () => checkAnswer(i, btn);
+        btn.onclick = () => handleSelection(i, btn);
         area.appendChild(btn);
     });
 }
 
-function checkAnswer(i, btn) {
+function handleSelection(i, btn) {
+    if (correctAnswers.length <= 1) {
+        // 1つ選ぶ問題なら即判定
+        evaluateAnswer([i]);
+    } else {
+        // 複数選ぶ問題の処理
+        if (selectedOptions.includes(i)) {
+            selectedOptions = selectedOptions.filter(val => val !== i);
+            btn.classList.remove("selected");
+        } else {
+            selectedOptions.push(i);
+            btn.classList.add("selected");
+        }
+        
+        // 必要な数だけ選んだら自動判定！
+        if (selectedOptions.length === correctAnswers.length) {
+            evaluateAnswer(selectedOptions);
+        }
+    }
+}
+
+function evaluateAnswer(userAnswers) {
     const q = quizData[currentIndex];
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(b => b.disabled = true);
     
-    const correctIdx = parseInt(q["正解番号"], 10);
+    // 全て正解しているかチェック
+    const isCorrect = userAnswers.length === correctAnswers.length && userAnswers.every(val => correctAnswers.includes(val));
     
-    if (i === correctIdx) { 
-        btn.classList.add("correct"); score++; 
+    if (isCorrect) { 
+        userAnswers.forEach(idx => buttons[idx].classList.add("correct"));
+        score++; 
         document.getElementById("teacher-message").innerText = getRandomVoice("correct");
     } else { 
-        btn.classList.add("wrong"); 
-        if (buttons[correctIdx]) buttons[correctIdx].classList.add("correct");
+        userAnswers.forEach(idx => {
+            if (correctAnswers.includes(idx)) buttons[idx].classList.add("correct");
+            else buttons[idx].classList.add("wrong");
+        });
+        correctAnswers.forEach(idx => buttons[idx].classList.add("correct"));
         document.getElementById("teacher-message").innerText = getRandomVoice("wrong");
     }
     
@@ -115,7 +171,8 @@ document.getElementById("next-btn").onclick = () => {
     if (currentIndex < quizData.length) { 
         document.getElementById("result-area").style.display = "none";
         document.getElementById("next-btn").style.display = "none";
-        loadQuestion(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        loadQuestion(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } else saveAndShowFinalResult();
 };
 
@@ -187,29 +244,52 @@ async function saveAndShowFinalResult() {
     try {
         await db.collection("examResults").add({ score: score, total: quizData.length, percentage: passRate, mode: questionLimit, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
         drawHistoryChart();
-    } catch (error) { console.error(error); }
+    } catch (error) { console.error("Firebase保存エラー:", error); }
 }
 
 let donutChartInstance = null; let lineChartInstance = null;
+
 function drawDoughnutChart(correctCount, wrongCount) {
     if(donutChartInstance) donutChartInstance.destroy();
     donutChartInstance = new Chart(document.getElementById('doughnutChart').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: ['正解', '不正解'], datasets: [{ data: [correctCount, wrongCount], backgroundColor: ['rgba(0, 255, 128, 0.8)', 'rgba(255, 0, 85, 0.5)'], borderColor: ['#00ff80', '#ff0055'], borderWidth: 2 }] },
+        data: { 
+            labels: ['正解', '不正解'], 
+            datasets: [{ 
+                data: [correctCount, wrongCount], 
+                backgroundColor: ['rgba(0, 255, 128, 0.8)', 'rgba(255, 0, 85, 0.5)'], 
+                borderColor: ['#00ff80', '#ff0055'], 
+                borderWidth: 2 
+            }] 
+        },
         options: { cutout: '65%', plugins: { legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } }, title: { display: true, text: '今回の正答比率', color: '#00f3ff', font: { family: 'Orbitron' } } } }
     });
 }
+
 async function drawHistoryChart() {
     if(lineChartInstance) lineChartInstance.destroy();
     const snapshot = await db.collection("examResults").orderBy("timestamp", "asc").limit(15).get();
     const labels = [], dataPoints = [], borderPoints = []; let attempt = 1;
-    snapshot.forEach(doc => { labels.push("T-" + attempt); dataPoints.push(doc.data().percentage); borderPoints.push(PASSING_BORDER); attempt++; });
+    snapshot.forEach(doc => { 
+        labels.push("T-" + attempt); 
+        dataPoints.push(doc.data().percentage); 
+        borderPoints.push(PASSING_BORDER); 
+        attempt++; 
+    });
+    
     lineChartInstance = new Chart(document.getElementById('historyChart').getContext('2d'), {
         type: 'line',
-        data: { labels: labels, datasets: [ { label: '正答率 (%)', data: dataPoints, borderColor: '#00f3ff', backgroundColor: 'rgba(0, 243, 255, 0.1)', borderWidth: 3, fill: true, tension: 0.3 }, { label: 'ボーダー (70%)', data: borderPoints, borderColor: '#ff0055', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false } ] },
+        data: { 
+            labels: labels, 
+            datasets: [ 
+                { label: '正答率 (%)', data: dataPoints, borderColor: '#00f3ff', backgroundColor: 'rgba(0, 243, 255, 0.1)', borderWidth: 3, fill: true, tension: 0.3 }, 
+                { label: 'ボーダー (70%)', data: borderPoints, borderColor: '#ff0055', borderWidth: 2, borderDash: [5, 5], pointRadius: 0, fill: false } 
+            ] 
+        },
         options: { plugins: { legend: { labels: { color: '#e2e8f0', font: { family: 'Orbitron' } } }, title: { display: true, text: '成長と合格ライン', color: '#00f3ff', font: { family: 'Orbitron' } } }, scales: { x: { ticks: { color: '#94a3b8', font: { family: 'Orbitron' } } }, y: { beginAtZero: true, max: 100, ticks: { color: '#94a3b8', font: { family: 'Orbitron' } } } } }
     });
 }
+
 async function openStatsScreen() {
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("stats-screen").style.display = "block";
@@ -217,10 +297,17 @@ async function openStatsScreen() {
         const snapshot = await db.collection("examResults").orderBy("timestamp", "desc").get();
         const now = new Date().getTime(), oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000), oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
         let wTotal = 0, wCorrect = 0, mTotal = 0, mCorrect = 0;
-        const logList = document.getElementById("log-list"); logList.innerHTML = ""; 
-        if (snapshot.empty) { logList.innerHTML = `<p style="text-align: center; color: #aaa;">戦歴なし</p>`; return; }
+        const logList = document.getElementById("log-list"); 
+        logList.innerHTML = ""; 
+        
+        if (snapshot.empty) { 
+            logList.innerHTML = `<p style="text-align: center; color: #aaa;">戦歴なし</p>`; 
+            return; 
+        }
+        
         snapshot.forEach(doc => {
-            const data = doc.data(); if (!data.timestamp) return; 
+            const data = doc.data(); 
+            if (!data.timestamp) return; 
             const t = data.timestamp.toDate().getTime();
             if (t >= oneWeekAgo) { wTotal += data.total; wCorrect += data.score; }
             if (t >= oneMonthAgo) { mTotal += data.total; mCorrect += data.score; }
@@ -232,8 +319,17 @@ async function openStatsScreen() {
                     <span class="log-pct ${data.percentage >= PASSING_BORDER ? "" : "low"}">${data.percentage}%</span>
                 </div>`;
         });
-        document.getElementById("weekly-count").innerText = wTotal; document.getElementById("weekly-rate").innerText = wTotal > 0 ? Math.round((wCorrect / wTotal) * 100) : 0;
-        document.getElementById("monthly-count").innerText = mTotal; document.getElementById("monthly-rate").innerText = mTotal > 0 ? Math.round((mCorrect / mTotal) * 100) : 0;
-    } catch (e) { document.getElementById("log-list").innerHTML = `<p style="color: #ff0055;">データ取得エラー</p>`; }
+        
+        document.getElementById("weekly-count").innerText = wTotal; 
+        document.getElementById("weekly-rate").innerText = wTotal > 0 ? Math.round((wCorrect / wTotal) * 100) : 0;
+        document.getElementById("monthly-count").innerText = mTotal; 
+        document.getElementById("monthly-rate").innerText = mTotal > 0 ? Math.round((mCorrect / mTotal) * 100) : 0;
+    } catch (e) { 
+        document.getElementById("log-list").innerHTML = `<p style="color: #ff0055;">データ取得エラー</p>`; 
+    }
 }
-function closeStatsScreen() { document.getElementById("stats-screen").style.display = "none"; document.getElementById("start-screen").style.display = "block"; }
+
+function closeStatsScreen() { 
+    document.getElementById("stats-screen").style.display = "none"; 
+    document.getElementById("start-screen").style.display = "block"; 
+}
