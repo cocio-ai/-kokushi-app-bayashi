@@ -9,9 +9,9 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv";
+// ★超重要！URLの最後に時間をくっつけて、iPadのキャッシュを強制的に無効化する！★
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv&t=" + new Date().getTime();
 
-// ★アプリ起動時に全ての問題をプールしておく最強の変数★
 let allAvailableQuestions = []; 
 let quizData = [];
 let currentIndex = 0;
@@ -33,11 +33,15 @@ function getRandomVoice(type) {
     return lines[Math.floor(Math.random() * lines.length)];
 }
 
-// ★アプリを開いた瞬間に裏側でデータベースを読み込む！★
 window.onload = () => {
-    if (localStorage.getItem('bayashi_save_data')) {
-        document.getElementById('resume-btn').style.display = 'block';
+    try {
+        if (localStorage.getItem('bayashi_save_data')) {
+            document.getElementById('resume-btn').style.display = 'block';
+        }
+    } catch(e) {
+        console.error("Local storage error", e);
     }
+    // 起動と同時に自動読み込みスタート！
     loadDatabaseSilent();
 };
 
@@ -48,18 +52,29 @@ function loadDatabaseSilent() {
         skipEmptyLines: true,
         complete: (results) => {
             try {
-                // 空白行を弾いて、本当にデータが入っている問題だけをカウント！
+                // 問題文が空っぽじゃない行だけを抽出してカウント！
                 allAvailableQuestions = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
                 
-                // スタート画面のパネルにリアルタイムで件数を表示！
+                // もし0件なら、公開設定がおかしい可能性大
+                if(allAvailableQuestions.length === 0) {
+                    document.getElementById("db-sync-status").innerText = "ERROR";
+                    document.getElementById("db-sync-status").style.color = "#ff0055";
+                    document.getElementById("teacher-message").innerText = "「データが0件だ！スプレッドシートの『ウェブへの公開』ボタンをちゃんと押したか！？」";
+                    return;
+                }
+
+                document.getElementById("db-sync-status").innerText = "ONLINE";
+                document.getElementById("db-sync-status").style.color = "#00ff80";
                 document.getElementById("total-db-count").innerText = allAvailableQuestions.length;
                 document.getElementById("teacher-message").innerText = `「データベース同期完了！現在 ${allAvailableQuestions.length}問 が特訓可能だ！メニューを選べ！」`;
             } catch (err) {
-                document.getElementById("teacher-message").innerText = "「システムエラー: " + err.message + "」";
+                document.getElementById("teacher-message").innerText = "「システムエラーだ！詳細: " + err.message + "」";
             }
         },
         error: (err) => { 
-            document.getElementById("teacher-message").innerText = "「通信失敗だ！スプレッドシートの公開設定を確認しろ！」"; 
+            document.getElementById("db-sync-status").innerText = "FAILED";
+            document.getElementById("db-sync-status").style.color = "#ff0055";
+            document.getElementById("teacher-message").innerText = "「通信失敗だ！原因:【" + err.message + "】 スプレッドシートが公開されているか確認しろ！」"; 
         }
     });
 }
@@ -67,15 +82,13 @@ function loadDatabaseSilent() {
 function startQuiz(limit) { 
     localStorage.removeItem('bayashi_save_data');
     
-    // まだデータが読み込めていなければ待たせる
     if (allAvailableQuestions.length === 0) {
-        alert("「データベースと通信中だ！数秒待ってからもう一度押してくれ！」");
+        alert("「まだデータベースと同期できていない！少し待つか、画面を更新してくれ！」");
         return;
     }
 
-    // 裏で取得済みの全データからシャッフルして必要な数だけ抽出（通信がないから一瞬で起動！）
     let shuffled = [...allAvailableQuestions].sort(() => Math.random() - 0.5);
-    let actualLimit = Math.min(limit, shuffled.length); // 万が一問題数が足りない時の対策
+    let actualLimit = Math.min(limit, shuffled.length);
     quizData = shuffled.slice(0, actualLimit);
     
     questionLimit = actualLimit; 
@@ -85,7 +98,7 @@ function startQuiz(limit) {
     document.getElementById("total-q-num").innerText = quizData.length;
 
     if(actualLimit === 120) {
-        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、限界を見せてみろ！」";
+        document.getElementById("teacher-message").innerText = "「本番モード起動だ！限界を見せてみろ！」";
     } else {
         document.getElementById("teacher-message").innerText = `「よし！${actualLimit}問の特訓を開始するぞ！気合を入れろ！」`;
     }
