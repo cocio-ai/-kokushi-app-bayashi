@@ -9,33 +9,23 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 400エラー回避用公式ルート
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1gv29nMOukoWjgY9ytkJBLvusbPTp-t3ErixSOCCwgHg/gviz/tq?tqx=out:csv";
 
+// ★アプリ起動時に全ての問題をプールしておく最強の変数★
+let allAvailableQuestions = []; 
 let quizData = [];
 let currentIndex = 0;
 let score = 0;
 let questionLimit = 10;
 const PASSING_BORDER = 70; 
 
-// 複数選択用の変数
 let selectedOptions = [];
 let correctAnswers = [];
 
 const voiceLines = {
-    encourage: [
-        "「さあ、次の問題だ！気合を入れ直せ！」", 
-        "「疲れてきた時が本当の勝負だぞ！食らいつけ！」", 
-        "「バヤシならできる！自分の努力を信じろ！」"
-    ],
-    correct: [
-        "「大正解！その調子だバヤシ、お前の力は本物だ！」", 
-        "「ナイス判断だ！その知識が未来の患者を救うぞ！」"
-    ],
-    wrong: [
-        "「ドンマイ！今のミスは本番で間違えないための投資だ！」", 
-        "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」"
-    ]
+    encourage: ["「さあ、次の問題だ！気合を入れ直せ！」", "「疲れてきた時が本当の勝負だぞ！食らいつけ！」", "「バヤシならできる！自分の努力を信じろ！」"],
+    correct: ["「大正解！その調子だバヤシ、お前の力は本物だ！」", "「ナイス判断だ！その知識が未来の患者を救うぞ！」"],
+    wrong: ["「ドンマイ！今のミスは本番で間違えないための投資だ！」", "「ここで間違えてラッキーだと思え！次は絶対に間違えるな！」"]
 };
 
 function getRandomVoice(type) {
@@ -43,39 +33,63 @@ function getRandomVoice(type) {
     return lines[Math.floor(Math.random() * lines.length)];
 }
 
+// ★アプリを開いた瞬間に裏側でデータベースを読み込む！★
 window.onload = () => {
     if (localStorage.getItem('bayashi_save_data')) {
         document.getElementById('resume-btn').style.display = 'block';
     }
+    loadDatabaseSilent();
 };
 
-function fetchQuizData() {
+function loadDatabaseSilent() {
     Papa.parse(SHEET_CSV_URL, {
         download: true,
         header: true, 
         skipEmptyLines: true,
         complete: (results) => {
             try {
-                let allData = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
-                if (allData.length === 0) {
-                    document.getElementById("teacher-message").innerText = "「データが空だ！スプレッドシートを確認してくれ！」"; 
-                    return;
-                }
-                allData.sort(() => Math.random() - 0.5);
-                quizData = allData.slice(0, questionLimit);
-                document.getElementById("total-q-num").innerText = quizData.length;
-                showQuiz();
+                // 空白行を弾いて、本当にデータが入っている問題だけをカウント！
+                allAvailableQuestions = results.data.filter(row => row["問題文"] && row["問題文"].trim() !== "");
+                
+                // スタート画面のパネルにリアルタイムで件数を表示！
+                document.getElementById("total-db-count").innerText = allAvailableQuestions.length;
+                document.getElementById("teacher-message").innerText = `「データベース同期完了！現在 ${allAvailableQuestions.length}問 が特訓可能だ！メニューを選べ！」`;
             } catch (err) {
                 document.getElementById("teacher-message").innerText = "「システムエラー: " + err.message + "」";
             }
         },
         error: (err) => { 
-            document.getElementById("teacher-message").innerText = "「通信失敗: " + err.message + "」"; 
+            document.getElementById("teacher-message").innerText = "「通信失敗だ！スプレッドシートの公開設定を確認しろ！」"; 
         }
     });
 }
 
-function showQuiz() {
+function startQuiz(limit) { 
+    localStorage.removeItem('bayashi_save_data');
+    
+    // まだデータが読み込めていなければ待たせる
+    if (allAvailableQuestions.length === 0) {
+        alert("「データベースと通信中だ！数秒待ってからもう一度押してくれ！」");
+        return;
+    }
+
+    // 裏で取得済みの全データからシャッフルして必要な数だけ抽出（通信がないから一瞬で起動！）
+    let shuffled = [...allAvailableQuestions].sort(() => Math.random() - 0.5);
+    let actualLimit = Math.min(limit, shuffled.length); // 万が一問題数が足りない時の対策
+    quizData = shuffled.slice(0, actualLimit);
+    
+    questionLimit = actualLimit; 
+    currentIndex = 0; 
+    score = 0;
+    
+    document.getElementById("total-q-num").innerText = quizData.length;
+
+    if(actualLimit === 120) {
+        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、限界を見せてみろ！」";
+    } else {
+        document.getElementById("teacher-message").innerText = `「よし！${actualLimit}問の特訓を開始するぞ！気合を入れろ！」`;
+    }
+    
     document.getElementById("start-screen").style.display = "none";
     document.getElementById("quiz-contents").style.display = "block";
     loadQuestion();
@@ -85,15 +99,12 @@ function loadQuestion() {
     const q = quizData[currentIndex];
     if (!q) return; 
     
-    // 状態のリセット
     selectedOptions = [];
-    // カンマ区切りの正解番号を取得（複数選択対応）
     const rawAnswer = String(q["正解番号"]).replace(/、/g, ',');
     correctAnswers = rawAnswer.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
 
     document.getElementById("current-q-num").innerText = currentIndex + 1;
     
-    // 複数選択問題の場合は問題文にヒントを足す
     let qText = q["問題文"].replace(/\n/g, '<br>');
     if (correctAnswers.length > 1) {
         qText = `<span style="color: #ffaa00;">【${correctAnswers.length}つ選べ】</span><br><br>` + qText;
@@ -117,10 +128,8 @@ function loadQuestion() {
 
 function handleSelection(i, btn) {
     if (correctAnswers.length <= 1) {
-        // 1つ選ぶ問題なら即判定
         evaluateAnswer([i]);
     } else {
-        // 複数選ぶ問題の処理
         if (selectedOptions.includes(i)) {
             selectedOptions = selectedOptions.filter(val => val !== i);
             btn.classList.remove("selected");
@@ -128,8 +137,6 @@ function handleSelection(i, btn) {
             selectedOptions.push(i);
             btn.classList.add("selected");
         }
-        
-        // 必要な数だけ選んだら自動判定！
         if (selectedOptions.length === correctAnswers.length) {
             evaluateAnswer(selectedOptions);
         }
@@ -141,7 +148,6 @@ function evaluateAnswer(userAnswers) {
     const buttons = document.querySelectorAll(".option-btn");
     buttons.forEach(b => b.disabled = true);
     
-    // 全て正解しているかチェック
     const isCorrect = userAnswers.length === correctAnswers.length && userAnswers.every(val => correctAnswers.includes(val));
     
     if (isCorrect) { 
@@ -175,19 +181,6 @@ document.getElementById("next-btn").onclick = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     } else saveAndShowFinalResult();
 };
-
-function startQuiz(limit) { 
-    localStorage.removeItem('bayashi_save_data');
-    
-    questionLimit = limit; currentIndex = 0; score = 0;
-    if(limit === 120) {
-        document.getElementById("teacher-message").innerText = "「本番モード起動だ！120問、限界を見せてみろ！」";
-    } else {
-        document.getElementById("teacher-message").innerText = `「よし！${limit}問の特訓を開始するぞ！気合を入れろ！」`;
-    }
-    document.getElementById("teacher-message").innerText += "\n(データアクセス中... 待機しろ！)";
-    fetchQuizData(); 
-}
 
 function quitQuiz(isSave) {
     if (isSave) {
