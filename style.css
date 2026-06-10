@@ -13,323 +13,80 @@ body {
     background-attachment: fixed;
 }
 
-#app-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-}
+#app-container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-header h1 {
-    color: #ffffff;
-    font-size: 1.4rem;
-    text-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: 900;
-}
+header h1 { color: #ffffff; font-size: 1.4rem; text-shadow: 0 0 10px rgba(0, 243, 255, 0.8); text-align: center; margin-bottom: 25px; font-weight: 900; }
+header span { color: #00f3ff; text-shadow: 0 0 15px #00f3ff, 0 0 30px #00f3ff; font-size: 1.7rem; letter-spacing: 3px; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; }
 
-header span {
-    color: #00f3ff;
-    text-shadow: 0 0 15px #00f3ff, 0 0 30px #00f3ff;
-    font-size: 1.7rem;
-    letter-spacing: 3px;
-    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
-}
+#teacher-section { display: flex; align-items: stretch; margin-bottom: 30px; }
+.teacher-profile { width: 75px; flex-shrink: 0; text-align: center; margin-right: 15px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+.teacher-profile img { border: 2px solid #00f3ff; border-radius: 50%; padding: 3px; box-shadow: 0 0 15px #00f3ff, inset 0 0 10px #00f3ff; width: 65px; height: 65px; background: #02050f; object-fit: cover; }
+.teacher-profile p { color: #00f3ff; font-size: 0.75rem; margin-top: 8px; font-weight: 900; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; text-shadow: 0 0 5px #00f3ff; white-space: nowrap; }
 
-/* 教官セクションと完璧な吹き出し */
-#teacher-section {
-    display: flex;
-    align-items: stretch;
-    margin-bottom: 30px;
-}
+#teacher-message-wrapper { flex: 1; display: flex; align-items: center; }
+#teacher-message-box { position: relative; background: rgba(0, 20, 40, 0.85); border: 2px solid #00f3ff; border-radius: 8px; padding: 15px 20px; box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); width: 100%; box-sizing: border-box; }
+#teacher-message-box::before { content: ''; position: absolute; top: 50%; left: -14px; transform: translateY(-50%); border-width: 10px 14px 10px 0; border-style: solid; border-color: transparent #00f3ff transparent transparent; }
+#teacher-message-box::after { content: ''; position: absolute; top: 50%; left: -10px; transform: translateY(-50%); border-width: 8px 11px 8px 0; border-style: solid; border-color: transparent rgba(0, 20, 40, 0.95) transparent transparent; }
+#teacher-message { margin: 0; font-weight: bold; font-size: 0.95rem; line-height: 1.6; color: #ffffff; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
 
-.teacher-profile {
-    width: 75px;
-    flex-shrink: 0;
-    text-align: center;
-    margin-right: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.teacher-profile img {
-    border: 2px solid #00f3ff;
-    border-radius: 50%;
-    padding: 3px;
-    box-shadow: 0 0 15px #00f3ff, inset 0 0 10px #00f3ff;
-    width: 65px;
-    height: 65px;
-    background: #02050f;
-    object-fit: cover;
-}
-
-.teacher-profile p {
-    color: #00f3ff;
-    font-size: 0.75rem;
-    margin-top: 8px;
-    font-weight: 900;
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 1px;
-    text-shadow: 0 0 5px #00f3ff;
-    white-space: nowrap;
-}
-
-#teacher-message-wrapper {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-#teacher-message-box {
-    position: relative;
-    background: rgba(0, 20, 40, 0.85);
-    border: 2px solid #00f3ff;
-    border-radius: 8px;
-    padding: 15px 20px;
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-#teacher-message-box::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -14px;
-    transform: translateY(-50%);
-    border-width: 10px 14px 10px 0;
-    border-style: solid;
-    border-color: transparent #00f3ff transparent transparent;
-}
-#teacher-message-box::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -10px;
-    transform: translateY(-50%);
-    border-width: 8px 11px 8px 0;
-    border-style: solid;
-    border-color: transparent rgba(0, 20, 40, 0.95) transparent transparent;
-}
-
-#teacher-message {
-    margin: 0;
-    font-weight: bold;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #ffffff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-}
-
-/* モード選択カード */
-.mode-card {
-    background: linear-gradient(135deg, rgba(0, 243, 255, 0.05) 0%, rgba(0, 15, 30, 0.9) 100%);
-    border: 1px solid rgba(0, 243, 255, 0.4);
-    border-left: 5px solid #00f3ff;
+/* ★DBステータスバー（収録問題数表示）★ */
+.db-status-bar {
+    background: rgba(0, 243, 255, 0.08);
+    border: 1px solid rgba(0, 243, 255, 0.5);
     border-radius: 6px;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
+    box-shadow: inset 0 0 15px rgba(0,243,255,0.1), 0 0 10px rgba(0,243,255,0.2);
+    letter-spacing: 1px;
 }
 
-.mode-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
-    transition: all 0.5s ease;
-}
-
-.mode-card:hover {
-    border-color: #00f3ff;
-    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-    transform: translateY(-3px);
-}
+.mode-card { background: linear-gradient(135deg, rgba(0, 243, 255, 0.05) 0%, rgba(0, 15, 30, 0.9) 100%); border: 1px solid rgba(0, 243, 255, 0.4); border-left: 5px solid #00f3ff; border-radius: 6px; padding: 15px 20px; margin-bottom: 15px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.mode-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent); transition: all 0.5s ease; }
+.mode-card:hover { border-color: #00f3ff; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); transform: translateY(-3px); }
 .mode-card:hover::before { left: 200%; }
-
 .mode-info { margin-bottom: 8px; }
-.mode-title {
-    margin: 0 0 5px 0;
-    color: #ffffff;
-    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
-    font-size: 1.25rem;
-    text-shadow: 0 0 5px #00f3ff;
-}
+.mode-title { margin: 0 0 5px 0; color: #ffffff; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; font-size: 1.25rem; text-shadow: 0 0 5px #00f3ff; }
 .mode-desc { margin: 0; font-size: 0.85rem; color: #a0c0d0; line-height: 1.4; }
-.mode-time {
-    align-self: flex-end;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.85rem;
-    color: #00f3ff;
-    font-weight: 900;
-    letter-spacing: 1px;
-}
+.mode-time { align-self: flex-end; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: #00f3ff; font-weight: 900; letter-spacing: 1px; }
 
-/* 各種ボタン */
-.stats-btn, .menu-btn {
-    width: 100%;
-    padding: 16px;
-    background: rgba(0, 10, 25, 0.8);
-    border: 1px solid #00f3ff;
-    color: #00f3ff;
-    font-weight: 900;
-    font-size: 1.1rem;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
-    cursor: pointer;
-    transition: 0.3s;
-    font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-.stats-btn {
-    border-color: #ff0055;
-    color: #ff0055;
-    box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
-    margin-top: 15px;
-}
+.stats-btn, .menu-btn { width: 100%; padding: 16px; background: rgba(0, 10, 25, 0.8); border: 1px solid #00f3ff; color: #00f3ff; font-weight: 900; font-size: 1.1rem; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); cursor: pointer; transition: 0.3s; font-family: 'Orbitron', 'Noto Sans JP', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+.stats-btn { border-color: #ff0055; color: #ff0055; box-shadow: 0 0 10px rgba(255, 0, 85, 0.2); margin-top: 15px; }
 .stats-btn:hover { background: rgba(255, 0, 85, 0.1); box-shadow: 0 0 20px rgba(255, 0, 85, 0.6); text-shadow: 0 0 5px #ff0055; }
-.resume-btn {
-    border-color: #ffaa00; color: #ffaa00;
-    background: linear-gradient(45deg, rgba(255, 170, 0, 0.1), rgba(0, 10, 25, 0.8));
-    box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
-    margin-bottom: 25px;
-}
+.resume-btn { border-color: #ffaa00; color: #ffaa00; background: linear-gradient(45deg, rgba(255, 170, 0, 0.1), rgba(0, 10, 25, 0.8)); box-shadow: 0 0 15px rgba(255, 170, 0, 0.3); margin-bottom: 25px; }
 .resume-btn:hover { background: rgba(255, 170, 0, 0.2); box-shadow: 0 0 20px rgba(255, 170, 0, 0.6); }
 
-/* コントロールパネル */
 .quiz-controls { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.control-btn {
-    padding: 10px 15px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.6);
-    transition: 0.3s;
-    font-family: 'Noto Sans JP', sans-serif;
-    letter-spacing: 1px;
-}
+.control-btn { padding: 10px 15px; font-size: 0.85rem; font-weight: bold; border-radius: 4px; cursor: pointer; background: rgba(0, 0, 0, 0.6); transition: 0.3s; font-family: 'Noto Sans JP', sans-serif; letter-spacing: 1px; }
 .save-btn { border: 1px solid #ffaa00; color: #ffaa00; }
 .save-btn:hover { background: rgba(255, 170, 0, 0.2); box-shadow: 0 0 15px rgba(255, 170, 0, 0.5); }
 .quit-btn { border: 1px solid #555; color: #aaa; }
 .quit-btn:hover { background: rgba(255, 0, 85, 0.2); border-color: #ff0055; color: #ff0055; }
 
-/* クイズ画面 */
-#quiz-contents {
-    border: 1px solid rgba(0, 243, 255, 0.5);
-    border-radius: 8px;
-    padding: 25px;
-    background: linear-gradient(180deg, rgba(5, 15, 30, 0.95) 0%, rgba(0, 5, 15, 0.95) 100%);
-    box-shadow: 0 0 25px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.05);
-}
-
-.mission-title {
-    color: #00f3ff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.5rem;
-    text-align: center;
-    margin: 0;
-    text-shadow: 0 0 10px #00f3ff;
-    letter-spacing: 3px;
-}
-
-.cyber-line {
-    border: none;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00f3ff, transparent);
-    margin: 20px 0;
-    box-shadow: 0 0 10px #00f3ff;
-}
-
-.question-box {
-    background: rgba(0, 243, 255, 0.02);
-    padding: 20px;
-    border-radius: 4px;
-    border-left: 4px solid #fff;
-    margin-bottom: 25px;
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
-}
-
+#quiz-contents { border: 1px solid rgba(0, 243, 255, 0.5); border-radius: 8px; padding: 25px; background: linear-gradient(180deg, rgba(5, 15, 30, 0.95) 0%, rgba(0, 5, 15, 0.95) 100%); box-shadow: 0 0 25px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.05); }
+.mission-title { color: #00f3ff; font-family: 'Orbitron', sans-serif; font-size: 1.5rem; text-align: center; margin: 0; text-shadow: 0 0 10px #00f3ff; letter-spacing: 3px; }
+.cyber-line { border: none; height: 2px; background: linear-gradient(90deg, transparent, #00f3ff, transparent); margin: 20px 0; box-shadow: 0 0 10px #00f3ff; }
+.question-box { background: rgba(0, 243, 255, 0.02); padding: 20px; border-radius: 4px; border-left: 4px solid #fff; margin-bottom: 25px; box-shadow: inset 0 0 10px rgba(255,255,255,0.05); }
 #question-text { font-size: 1.15rem; line-height: 1.7; margin: 0; color: #fff; font-weight: bold; }
 
-/* 選択肢 */
-.option-btn {
-    width: 100%;
-    text-align: left;
-    margin-bottom: 15px;
-    padding: 16px 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(0, 243, 255, 0.3);
-    color: #e0f7fa;
-    border-radius: 6px;
-    font-size: 1.05rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
+.option-btn { width: 100%; text-align: left; margin-bottom: 15px; padding: 16px 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 243, 255, 0.3); color: #e0f7fa; border-radius: 6px; font-size: 1.05rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease-in-out; }
 .option-btn:hover { border-color: #00f3ff; background: rgba(0, 243, 255, 0.1); transform: scale(1.01); }
 .option-btn.correct { background: rgba(0, 255, 128, 0.15); border-color: #00ff80; color: #00ff80; box-shadow: 0 0 15px rgba(0,255,128,0.3); }
 .option-btn.wrong { background: rgba(255, 0, 85, 0.15); border-color: #ff0055; color: #ff0055; box-shadow: 0 0 15px rgba(255,0,85,0.3); }
+.option-btn.selected { background: rgba(0, 243, 255, 0.25); border-color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.3); transform: scale(1.02); }
 
-/* 解説エリア */
-.explanation-box {
-    background: rgba(0, 243, 255, 0.05);
-    border: 1px dashed rgba(0, 243, 255, 0.4);
-    border-radius: 6px;
-    padding: 20px;
-    margin-top: 25px;
-}
+.explanation-box { background: rgba(0, 243, 255, 0.05); border: 1px dashed rgba(0, 243, 255, 0.4); border-radius: 6px; padding: 20px; margin-top: 25px; }
 .explanation-box h3 { color: #00f3ff; margin-top: 0; font-size: 1.1rem; letter-spacing: 1px; text-shadow: 0 0 5px #00f3ff; }
 #explanation { margin: 0; font-size: 1rem; line-height: 1.6; color: #d0e0ff; }
 
-/* ネクストボタン */
-#next-btn {
-    width: 100%;
-    margin-top: 25px;
-    padding: 18px;
-    background: #00f3ff;
-    color: #000;
-    font-weight: 900;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-family: 'Orbitron', sans-serif;
-    box-shadow: 0 0 20px rgba(0,243,255,0.6);
-    transition: all 0.3s;
-    letter-spacing: 2px;
-}
+#next-btn { width: 100%; margin-top: 25px; padding: 18px; background: #00f3ff; color: #000; font-weight: 900; border: none; border-radius: 6px; cursor: pointer; font-size: 1.2rem; font-family: 'Orbitron', sans-serif; box-shadow: 0 0 20px rgba(0,243,255,0.6); transition: all 0.3s; letter-spacing: 2px; }
 #next-btn:hover { background: #fff; box-shadow: 0 0 30px #fff; }
 
-/* ダッシュボード */
-.result-title {
-    color: #fff;
-    text-align: center;
-    font-family: 'Orbitron', sans-serif;
-    text-shadow: 0 0 15px #00f3ff;
-    letter-spacing: 3px;
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
+.result-title { color: #fff; text-align: center; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 15px #00f3ff; letter-spacing: 3px; font-size: 1.8rem; margin-bottom: 20px; }
 .stats-dashboard { display: flex; justify-content: space-between; margin-bottom: 30px; }
-.stat-box {
-    background: linear-gradient(180deg, rgba(0, 10, 25, 0.8) 0%, rgba(255, 0, 85, 0.05) 100%);
-    border: 1px solid #ff0055;
-    border-radius: 8px;
-    width: 48%;
-    padding: 20px 10px;
-    text-align: center;
-    box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.15);
-}
+.stat-box { background: linear-gradient(180deg, rgba(0, 10, 25, 0.8) 0%, rgba(255, 0, 85, 0.05) 100%); border: 1px solid #ff0055; border-radius: 8px; width: 48%; padding: 20px 10px; text-align: center; box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.15); }
 .stat-box h4 { margin: 0 0 10px 0; color: #ff0055; font-family: 'Orbitron', sans-serif; font-size: 1rem; letter-spacing: 1px; text-shadow: 0 0 5px #ff0055; }
 .stat-box p { margin: 5px 0; font-size: 0.9rem; color: #ccc; }
 .stat-num { font-size: 1.8rem; font-weight: 900; color: #fff; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px #fff; }
@@ -347,11 +104,3 @@ header span {
 #final-score-display { text-align: center; font-size: 4.5rem; font-family: 'Orbitron', sans-serif; font-weight: 900; margin: 25px 0; text-shadow: 0 0 30px currentColor; }
 .clear-text { color: #00ff80; font-weight: 900; text-align: center; font-size: 1.2rem; text-shadow: 0 0 10px #00ff80; }
 .warning-text { color: #ff0055; font-weight: 900; text-align: center; font-size: 1.2rem; text-shadow: 0 0 10px #ff0055; }
-
-/* ★追加：複数選択時の「選択中」エフェクト★ */
-.option-btn.selected {
-    background: rgba(0, 243, 255, 0.25);
-    border-color: #00f3ff;
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.3);
-    transform: scale(1.02);
-}
