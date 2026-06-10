@@ -24,12 +24,16 @@
             </div>
             <div id="teacher-message-wrapper">
                 <div id="teacher-message-box">
-                    <p id="teacher-message">「よし！今日も限界を突破するぞ！特訓メニューを選べ！」</p>
+                    <p id="teacher-message">「よし！今日も限界を突破するぞ！まずはデータベースの同期を確認しろ！」</p>
                 </div>
             </div>
         </div>
 
         <div id="start-screen">
+            <div id="db-status-bar" class="db-status-bar">
+                🔗 DB SYNC: <span style="color:#00ff80;">ONLINE</span> | 収録問題数: <span id="total-db-count" style="font-weight:900; font-size:1.3rem;">--</span> 問
+            </div>
+
             <button id="resume-btn" class="menu-btn resume-btn" style="display: none;" onclick="resumeQuiz()">🔄 前回の続きから再開する</button>
 
             <div class="mode-card" onclick="startQuiz(10)">
@@ -129,6 +133,6 @@
         </div>
     </div>
 
-    <script src="main.js?v=cyberFinal_All_Integrated"></script>
+    <script src="main.js?v=DbSyncMonitor"></script>
 </body>
 </html>
